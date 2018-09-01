@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "372091069370",
+    "firebase_url": "https://happychatapp.firebaseio.com",
+    "project_id": "happychatapp",
+    "storage_bucket": "happychatapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372091069370:android:eca0f6f817f936fe",
+        "android_client_info": {
+          "package_name": "com.duyhoang.happychatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372091069370-uk6ot2i0mk1umlt3l7cmimsfdu2ca531.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.duyhoang.happychatapp",
+            "certificate_hash": "320579c53b53ccb3829ca80cbd8ea46ef19a31ec"
+          }
+        },
+        {
+          "client_id": "372091069370-g8tv5g43icdav98ur7r7bs1ffk7t8f0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEjgvia6a7p732hclUnjrR_3bNVW7QeoY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372091069370-g8tv5g43icdav98ur7r7bs1ffk7t8f0q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

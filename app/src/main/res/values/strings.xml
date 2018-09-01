@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">HappyChatApp</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="full_name">Full name</string>
+    <string name="register">register</string>
+    <string name="i_agree_to_the_terms_of_service">I agree to the Terms of Service</string>
+    <string name="register_now">Register now.</string>
+    <string name="not_a_member">Not a member?</string>
+    <string name="re_type_password">Re-type Password</string>
+
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id">1826322970822073</string>
+    <string name="fb_login_protocol_scheme">fb1826322970822073</string>
+    <string name="log_out">Log out</string>
+
+</resources>
