@@ -1,0 +1,37 @@
+
+
+
+User {
+		userid1 {displayname, email, photourl}
+}
+
+message {
+	msgID1 {sender, content, date,  userid}
+	msgID2 {imageUrl}
+}
+
+
+chatRoom {
+	name:
+	member: {
+		userid1: true, 
+		userid2: true,
+	}
+}
+
+
+Friend{
+	userid1: {
+		userid2: true,
+		userid3: true,
+	}
+
+}
+
+//Meanning: 1 User co lastest message nao.
+LatestMessage {
+	userid1 : {
+		msgID1: true, // nếu 2 message cùng 1 user thì thế nào?
+		msgID2: true
+	}
+}

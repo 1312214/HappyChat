@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_message"
+        android:enabled="true"
+        android:title="@string/messages"
+        android:icon="@drawable/ic_chat_black_24dp"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/action_my_contact"
+        android:enabled="true"
+        android:icon="@drawable/ic_contacts_black_24dp"
+        android:title="@string/contact"
+        app:showAsAction="ifRoom|withText"/>
+
+    <item
+        android:id="@+id/action_chat_room"
+        android:icon="@drawable/ic_baseline_meeting_room_24px"
+        android:title="@string/chat_room"
+        app:showAsAction="ifRoom|withText"
+        android:enabled="true"/>
+    <item
+        android:id="@+id/action_my_acount"
+        android:enabled="true"
+        android:title="@string/my_account"
+        android:icon="@drawable/ic_account_box_black_24dp"
+        app:showAsAction="ifRoom|withText"/>
+
+    <item
+        android:id="@+id/action_logout"
+        android:enabled="true"
+        android:title="@string/log_out"
+        android:icon="@drawable/ic_logout"
+        app:showAsAction="collapseActionView"/>
+
+</menu>

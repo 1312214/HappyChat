@@ -164,7 +164,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
-                    startActivity(new Intent(RegisterActivity.this, ContactActivity.class));
+                    startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
                 } else {
                     Log.e(TAG, "signInWithEmail:failure", task.getException());
                     Toast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
@@ -199,7 +199,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             if(resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) AppConfig.saveLocalUserAccount(user);
-                startActivity(new Intent(this, ContactActivity.class));
+                startActivity(new Intent(this, HomeActivity.class));
             } else {
                 Log.e(TAG, "Google Login failed");
                 Toast.makeText(getApplicationContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             if(resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) AppConfig.saveLocalUserAccount(user);
-                startActivity(new Intent(this, ContactActivity.class));
+                startActivity(new Intent(this, HomeActivity.class));
             } else {
                 Log.e(TAG, "Facebook Login failed");
                 Toast.makeText(getApplicationContext(), "Facebook Login failed", Toast.LENGTH_SHORT).show();

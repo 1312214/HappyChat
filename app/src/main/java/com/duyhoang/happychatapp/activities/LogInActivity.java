@@ -49,7 +49,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, ContactActivity.class));
+            startActivity(new Intent(this, HomeActivity.class));
         }
         setContentView(R.layout.activity_login);
         initUI();
@@ -105,9 +105,11 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 attemptLogin(email, password);
             } else {
                 etPassword.setError(passwordError);
+                etPassword.setFocusable(true);
             }
         } else {
             etEmail.setError(emailError);
+            etEmail.setFocusable(true);
         }
 
     }
@@ -121,7 +123,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
                 if(task.isSuccessful()) {
                     FirebaseUser loginedUser = mAuth.getCurrentUser();
                     if(loginedUser != null) AppConfig.saveLocalUserAccount(loginedUser);
-                    startActivity(new Intent(LogInActivity.this, ContactActivity.class));
+                    startActivity(new Intent(LogInActivity.this, HomeActivity.class));
                 } else {
                     Toast.makeText(LogInActivity.this, "Your Login falied: Password/Emali is not correct", Toast.LENGTH_SHORT).show();
                 }
@@ -158,7 +160,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             if(resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) AppConfig.saveLocalUserAccount(user);
-                startActivity(new Intent(this, ContactActivity.class));
+                startActivity(new Intent(this, HomeActivity.class));
             } else {
                 Log.e(TAG, "Google Login failed");
                 Toast.makeText(getApplicationContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show();
@@ -168,7 +170,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             if(resultCode == RESULT_OK) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) AppConfig.saveLocalUserAccount(user);
-                startActivity(new Intent(this, ContactActivity.class));
+                startActivity(new Intent(this, HomeActivity.class));
             } else {
                 Log.e(TAG, "Facebook Login failed");
                 Toast.makeText(getApplicationContext(), "Facebook Login failed", Toast.LENGTH_SHORT).show();

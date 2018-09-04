@@ -22,7 +22,7 @@
         <activity
             android:name=".activities.RegisterActivity"
             android:parentActivityName=".activities.LogInActivity"/>
-        <activity android:name=".activities.ContactActivity"/>
+        <activity android:name=".activities.HomeActivity"/>
     </application>
 
 </manifest>
