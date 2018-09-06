@@ -23,7 +23,7 @@ public class RealTimeDataBaseUtil {
 
     private DatabaseReference mRefUsers;
     private DatabaseReference mRefChatRoom;
-    private List<ChattingUser> mChatRoomUserList;
+    public List<ChattingUser> mChatRoomUserList;
 
 
     private static RealTimeDataBaseUtil realTimeDataBaseUtil;
@@ -151,9 +151,6 @@ public class RealTimeDataBaseUtil {
 
     }
 
-    public List<ChattingUser> getChatRoomUserList() {
-        return mChatRoomUserList;
-    }
 
 
 
