@@ -29,8 +29,9 @@ public class ContactFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Loading data for mContactList here.
-        mContactList = CreateTestDataUtil.demodata();
-        mChatRoomAdapter = new ContactRecycleViewAdapter(getContext(), mContactList);
+//        mContactList = CreateTestDataUtil.demodata();
+        if(mContactList != null)
+            mChatRoomAdapter = new ContactRecycleViewAdapter(getContext(), mContactList);
         mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     }
 

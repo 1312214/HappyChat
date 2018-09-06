@@ -10,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRecycleViewAdapter.RoomUserViewHolder>{
+public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRecycleViewAdapter.RoomUserViewHolder>
+implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener{
 
     private List<ChattingUser> mListRoomUser;
     private Context mContext;
@@ -36,6 +38,7 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     @Override
     public RoomUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
+        RealTimeDataBaseUtil.getInstance().setmChatRoomUserQuantityChangedListener(this);
         return new RoomUserViewHolder(rootView);
     }
 
@@ -51,7 +54,10 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
                 .into(holder.imgAvatar);
     }
 
-
+    @Override
+    public void onNewChatUserInsertedAtPosition(int position) {
+        notifyItemInserted(position);
+    }
 
     class RoomUserViewHolder extends RecyclerView.ViewHolder{
 

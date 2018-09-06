@@ -28,11 +28,5 @@
         android:icon="@drawable/ic_account_box_black_24dp"
         app:showAsAction="ifRoom|withText"/>
 
-    <item
-        android:id="@+id/action_logout"
-        android:enabled="true"
-        android:title="@string/log_out"
-        android:icon="@drawable/ic_logout"
-        app:showAsAction="collapseActionView"/>
 
 </menu>

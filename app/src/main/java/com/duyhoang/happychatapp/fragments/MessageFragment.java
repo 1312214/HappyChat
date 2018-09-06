@@ -34,9 +34,11 @@ public class MessageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mChattingUserList = new ArrayList<>();
+
+        if(mChattingUserList != null)
+            mMessageListRecycleViewAdapter = new MessageListRecycleViewAdapter(getContext(), mChattingUserList);
         mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false);
-        mMessageListRecycleViewAdapter = new MessageListRecycleViewAdapter(getContext(), CreateTestDataUtil.demodata());
+
 
     }
 

@@ -40,7 +40,7 @@ public class MessageListRecycleViewAdapter extends RecyclerView.Adapter<MessageL
         ChattingUser chattingUser = mChattingUserList.get(position);
 
         holder.txtName.setText(chattingUser.getName());
-        holder.txtLastMessage.setText(chattingUser.getLastMessage());
+        holder.txtLastMessage.setText("temp text");
         //loading image by using Picasso lib
         Picasso.get().load(chattingUser.getPhotoUrl())
                 .placeholder(R.drawable.ic_account_circle_black_60dp)

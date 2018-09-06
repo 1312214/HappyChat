@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.CreateTestDataUtil;
+import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.adapters.ChatRoomRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;
 
@@ -21,16 +22,15 @@ public class ChatRoomFragment extends Fragment {
 
     private RecyclerView rvChattingUserList;
     private ChatRoomRecycleViewAdapter mChatRoomAdapter;
-    private List<ChattingUser> mChattingUserList;
     private GridLayoutManager mGridLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Loading list of room chat user from realtime database into mChattingUserList;
-        mChattingUserList = CreateTestDataUtil.demodata();
-        if(mChattingUserList != null)
-            mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), mChattingUserList);
+        RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChat();
+
+        mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().getChatRoomUserList());
         mGridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
 
     }
@@ -44,4 +44,6 @@ public class ChatRoomFragment extends Fragment {
         rvChattingUserList.setLayoutManager(mGridLayoutManager);
         return view;
     }
+
+
 }

@@ -9,13 +9,17 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.fragments.ContactFragment;
 import com.duyhoang.happychatapp.fragments.MyAccountFragment;
 import com.duyhoang.happychatapp.fragments.MessageFragment;
 import com.duyhoang.happychatapp.fragments.ChatRoomFragment;
+import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -23,6 +27,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private AuthUI mAuthUI;
     private BottomNavigationView bottomNavigationView;
     private FragmentManager mFragmentManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,28 +37,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         mFragmentManager = getSupportFragmentManager();
         initUI();
 
-    }
-
-
-
-    private void initUI() {
-        if(getSupportActionBar() != null) getSupportActionBar().hide();
-
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.action_message);
-    }
-
-
-
-
-    private void logout() {
-        mAuthUI.signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                startActivity(new Intent(HomeActivity.this, LogInActivity.class));
-            }
-        });
     }
 
     @Override
@@ -82,10 +66,17 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                         .commit();
                 return true;
 
-            case R.id.action_logout:
-                logout();
-                return true;
         }
         return false;
     }
+
+
+    private void initUI() {
+        if(getSupportActionBar() != null) getSupportActionBar().hide();
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.action_message);
+    }
+
+
 }

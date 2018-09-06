@@ -21,5 +21,6 @@
     <string name="display_name">Display name</string>
     <string name="messages">Messages</string>
     <string name="contact">Contact</string>
+    <string name="username">Username</string>
 
 </resources>

@@ -23,4 +23,12 @@ public class ValidationUtil {
 
         return strResult;
     }
+
+    public static String isUsernameValid(String username) {
+        String strResult = null;
+
+        if(TextUtils.isEmpty(username)) strResult = "Username is not empty";
+        return strResult;
+    }
+
 }

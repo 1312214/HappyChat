@@ -1,5 +1,7 @@
 package com.duyhoang.happychatapp.models;
 
+import com.google.firebase.auth.FirebaseUser;
+
 // This class is used for ContactFragment, ChatRoomFragment
 public class ChattingUser {
 
@@ -50,5 +52,14 @@ public class ChattingUser {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+
+    public static ChattingUser valueOf(FirebaseUser firebaseUser) {
+        if(firebaseUser.getPhotoUrl() != null) {
+            return new ChattingUser(firebaseUser.getUid(), firebaseUser.getDisplayName(), firebaseUser.getEmail(), firebaseUser.getPhotoUrl().toString());
+        } else {
+            return new ChattingUser(firebaseUser.getUid(), firebaseUser.getDisplayName(), firebaseUser.getEmail(), null);
+        }
     }
 }
