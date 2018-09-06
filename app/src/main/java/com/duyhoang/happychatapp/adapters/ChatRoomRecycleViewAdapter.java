@@ -38,7 +38,7 @@ implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener{
     @Override
     public RoomUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
-        RealTimeDataBaseUtil.getInstance().setmChatRoomUserQuantityChangedListener(this);
+        RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
         return new RoomUserViewHolder(rootView);
     }
 

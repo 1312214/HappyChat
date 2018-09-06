@@ -1,11 +1,13 @@
 package com.duyhoang.happychatapp.Utils;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,12 +97,26 @@ public class RealTimeDataBaseUtil {
         mChatRoomUserList = null;
         mChatRoomUserList = new ArrayList<ChattingUser>();
 
-        mRefChatRoom.child("members").addListenerForSingleValueEvent(new ValueEventListener() {
+        mRefChatRoom.child("members").addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot dss : dataSnapshot.getChildren()) {
-                    getChattingUserFromUsers(dss.getKey());
-                }
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String uidOfUser = dataSnapshot.getKey();
+                getnsaveChattingUserFromUsers(uidOfUser);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -113,7 +129,7 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void getChattingUserFromUsers(String uid) {
+    public void getnsaveChattingUserFromUsers(String uid) {
 
         mRefUsers.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             ChattingUser tempUser;
@@ -124,7 +140,7 @@ public class RealTimeDataBaseUtil {
 
                 // perform notifying to ChatRoomRecycleViewAdapter: notifyItemInserted here.
                 if(mChatRoomUserQuantityChangedListener != null)
-                    mChatRoomUserQuantityChangedListener.onNewChatUserInsertedAtPosition(mChatRoomUserList.size());
+                    mChatRoomUserQuantityChangedListener.onNewChatUserInsertedAtPosition(mChatRoomUserList.size() - 1);
             }
 
             @Override
@@ -146,7 +162,7 @@ public class RealTimeDataBaseUtil {
         void onNewChatUserInsertedAtPosition(int position);
     }
 
-    public void setmChatRoomUserQuantityChangedListener(ChatRoomUserQuantityChangedListener listener) {
+    public void setChatRoomUserQuantityChangedListener(ChatRoomUserQuantityChangedListener listener) {
         mChatRoomUserQuantityChangedListener = listener;
     }
 
