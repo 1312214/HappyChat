@@ -7,6 +7,7 @@ import android.util.Log;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +25,7 @@ public class RealTimeDataBaseUtil {
     private DatabaseReference mRefUsers;
     private DatabaseReference mRefChatRoom;
     public List<ChattingUser> mChatRoomUserList;
+    private DatabaseReference mRefContacts;
 
 
     private static RealTimeDataBaseUtil realTimeDataBaseUtil;
@@ -31,6 +33,7 @@ public class RealTimeDataBaseUtil {
     private RealTimeDataBaseUtil() {
         mRefUsers = FirebaseDatabase.getInstance().getReference("users");
         mRefChatRoom = FirebaseDatabase.getInstance().getReference("chat_room");
+        mRefContacts = FirebaseDatabase.getInstance().getReference("contacts");
     }
 
     public static RealTimeDataBaseUtil getInstance() {
@@ -151,7 +154,31 @@ public class RealTimeDataBaseUtil {
 
     }
 
+    public void setChatRoomUserQuantityChangedListener(ChatRoomUserQuantityChangedListener listener) {
+        mChatRoomUserQuantityChangedListener = listener;
+    }
 
+
+    public void addNewFriendToContact(final String friendID) {
+        final String currUID = FirebaseAuth.getInstance().getUid();
+        if(currUID != null)
+            mRefContacts.child(currUID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.hasChild(friendID)) {
+                        mRefChatRoom.child(currUID).child(friendID).setValue(true);
+                    } else {
+                        if(mMakingToastListener != null)
+                            mMakingToastListener.onToast("This User already added");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+    }
 
 
     private ChatRoomUserQuantityChangedListener mChatRoomUserQuantityChangedListener;
@@ -159,11 +186,16 @@ public class RealTimeDataBaseUtil {
         void onNewChatUserInsertedAtPosition(int position);
     }
 
-    public void setChatRoomUserQuantityChangedListener(ChatRoomUserQuantityChangedListener listener) {
-        mChatRoomUserQuantityChangedListener = listener;
+
+    private MakingToastListener mMakingToastListener;
+    public interface MakingToastListener {
+        void onToast(String message);
     }
 
 
+    public void setMakingToastListener(MakingToastListener makingToastListener) {
+        mMakingToastListener = makingToastListener;
+    }
 
 
 }
