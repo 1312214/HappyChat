@@ -20,7 +20,7 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
 
     private List<ChattingUser> mListRoomUser;
     private Context mContext;
-
+    private ChatRoomRecycleViewListener mChatRoomRecycleViewListener;
 
     public ChatRoomRecycleViewAdapter(Context context, List<ChattingUser> listRoomUser) {
         mContext = context;
@@ -39,9 +39,22 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     @NonNull
     @Override
     public RoomUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
 
-        return new RoomUserViewHolder(rootView);
+        View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
+        final RoomUserViewHolder viewHolder = new RoomUserViewHolder(rootView);
+
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int iSelect = viewHolder.getAdapterPosition();
+
+                if(mChatRoomRecycleViewListener != null)
+                    mChatRoomRecycleViewListener.onChatRoomUserSelected(mListRoomUser.get(iSelect).getUid());
+            }
+        });
+
+
+        return viewHolder;
     }
 
 
@@ -54,6 +67,7 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
                 .resize(60,60)
                 .centerCrop()
                 .into(holder.imgAvatar);
+
     }
 
 
@@ -67,7 +81,20 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
             super(item);
             imgAvatar = item.findViewById(R.id.imageView_chatroom_row_item_avatar);
             txtDisplayName = item.findViewById(R.id.textView_chatroom_row_item_display_name);
+
         }
+
+
+
+
+    }
+
+    public void setChatRoomRecycleViewListener(ChatRoomRecycleViewListener chatRoomRecycleViewListener) {
+        mChatRoomRecycleViewListener = chatRoomRecycleViewListener;
+    }
+
+    public interface ChatRoomRecycleViewListener {
+        void onChatRoomUserSelected(String selectedUserID);
     }
 
 

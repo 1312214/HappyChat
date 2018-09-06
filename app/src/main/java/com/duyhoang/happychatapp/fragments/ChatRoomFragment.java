@@ -17,7 +17,7 @@ import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.adapters.ChatRoomRecycleViewAdapter;
 
 public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
-        RealTimeDataBaseUtil.MakingToastListener{
+        RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener{
 
     private RecyclerView rvChattingUserList;
     private ChatRoomRecycleViewAdapter mChatRoomAdapter;
@@ -62,5 +62,12 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     @Override
     public void onToast(String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onChatRoomUserSelected(String selectedUserID) {
+        // showing Actionbar that allows user to hit button to add new friend and Cancel buton.
+        // asking user want to add this user + NAME --> change selectedUserID to ChattingUser parameter.
+//        RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUserID);
     }
 }
