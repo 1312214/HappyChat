@@ -22,5 +22,8 @@
     <string name="messages">Messages</string>
     <string name="contact">Contact</string>
     <string name="username">Username</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="see_profile">See Profile</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

@@ -62,6 +62,13 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         }
     }
 
+
+    @Override
+    public void onDetach() {
+        if(mContext != null) mContext = null;
+        super.onDetach();
+    }
+
     private void initUI(View view) {
         btnLogout = view.findViewById(R.id.button_myAccount_log_out);
 

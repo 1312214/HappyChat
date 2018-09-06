@@ -159,14 +159,17 @@ public class RealTimeDataBaseUtil {
     }
 
 
+
     public void addNewFriendToContact(final String friendID) {
         final String currUID = FirebaseAuth.getInstance().getUid();
         if(currUID != null)
             mRefContacts.child(currUID).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChild(friendID)) {
-                        mRefChatRoom.child(currUID).child(friendID).setValue(true);
+                    if(!dataSnapshot.hasChild(friendID)) {
+                        mRefContacts.child(currUID).child(friendID).setValue(true);
+                        if(mMakingToastListener != null)
+                            mMakingToastListener.onToast("Added successfully");
                     } else {
                         if(mMakingToastListener != null)
                             mMakingToastListener.onToast("This User already added");
@@ -178,6 +181,7 @@ public class RealTimeDataBaseUtil {
 
                 }
             });
+
     }
 
 

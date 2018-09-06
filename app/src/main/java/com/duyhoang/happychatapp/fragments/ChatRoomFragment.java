@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.adapters.ChatRoomRecycleViewAdapter;
+import com.duyhoang.happychatapp.models.ChattingUser;
 
 public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
         RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener{
@@ -23,6 +25,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     private ChatRoomRecycleViewAdapter mChatRoomAdapter;
     private GridLayoutManager mGridLayoutManager;
     private Context mContext;
+
 
     @Override
     public void onAttach(Context context) {
@@ -40,7 +43,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChat();
         mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().mChatRoomUserList);
         mGridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
-
+        mChatRoomAdapter.setChatRoomRecycleViewListener(this);
     }
 
     @Nullable
@@ -65,9 +68,19 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     }
 
     @Override
-    public void onChatRoomUserSelected(String selectedUserID) {
-        // showing Actionbar that allows user to hit button to add new friend and Cancel buton.
-        // asking user want to add this user + NAME --> change selectedUserID to ChattingUser parameter.
-//        RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUserID);
+    public void onChatRoomUserSelected(ChattingUser selectedUser) {
+        ((HomeActivity)mContext).showActionBarMenuForSelectedUser(selectedUser);
+    }
+
+
+    @Override
+    public void onDetach() {
+        if(mContext != null) mContext = null;
+        super.onDetach();
+    }
+
+
+    public void eliminateChattingRoomUserAddedSuccessfullyFromChatRoom() {
+        mChatRoomAdapter.updateRoomUserList();
     }
 }

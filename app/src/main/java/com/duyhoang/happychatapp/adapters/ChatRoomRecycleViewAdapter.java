@@ -21,6 +21,7 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     private List<ChattingUser> mListRoomUser;
     private Context mContext;
     private ChatRoomRecycleViewListener mChatRoomRecycleViewListener;
+    private int mSelectedUser;
 
     public ChatRoomRecycleViewAdapter(Context context, List<ChattingUser> listRoomUser) {
         mContext = context;
@@ -46,10 +47,10 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int iSelect = viewHolder.getAdapterPosition();
+                mSelectedUser = viewHolder.getAdapterPosition();
 
                 if(mChatRoomRecycleViewListener != null)
-                    mChatRoomRecycleViewListener.onChatRoomUserSelected(mListRoomUser.get(iSelect).getUid());
+                    mChatRoomRecycleViewListener.onChatRoomUserSelected(mListRoomUser.get(mSelectedUser));
             }
         });
 
@@ -94,7 +95,16 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     }
 
     public interface ChatRoomRecycleViewListener {
-        void onChatRoomUserSelected(String selectedUserID);
+        void onChatRoomUserSelected(ChattingUser selectedUser);
+    }
+
+    public int getSelectedUser() {
+        return mSelectedUser;
+    }
+
+    public void updateRoomUserList() {
+        mListRoomUser.remove(mSelectedUser);
+        notifyItemRemoved(mSelectedUser);
     }
 
 

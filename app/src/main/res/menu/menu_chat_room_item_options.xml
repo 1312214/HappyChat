@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/menu_item_chatroom_add_friend"
+        android:title="@string/add_friend"
+        android:icon="@drawable/ic_person_add_white_24dp"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_item_chatroom_see_profile"
+        android:title="@string/see_profile"
+        android:icon="@drawable/ic_account_circle_white_24dp"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_item_chatroom_cancel"
+        android:title="@string/cancel"
+        android:icon="@drawable/ic_cancel_black_24dp"
+        app:showAsAction="collapseActionView"/>
+</menu>
