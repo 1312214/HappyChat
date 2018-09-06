@@ -16,8 +16,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRecycleViewAdapter.RoomUserViewHolder>
-implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener{
+public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRecycleViewAdapter.RoomUserViewHolder> {
 
     private List<ChattingUser> mListRoomUser;
     private Context mContext;
