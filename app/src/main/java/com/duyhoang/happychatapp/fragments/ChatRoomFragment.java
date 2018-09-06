@@ -18,10 +18,11 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 
 import java.util.List;
 
-public class ChatRoomFragment extends Fragment {
+public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener{
 
     private RecyclerView rvChattingUserList;
     private ChatRoomRecycleViewAdapter mChatRoomAdapter;
+    private List<ChattingUser> mChatRoomUserList = null;
     private GridLayoutManager mGridLayoutManager;
 
     @Override
@@ -30,7 +31,8 @@ public class ChatRoomFragment extends Fragment {
         //Loading list of room chat user from realtime database into mChattingUserList;
         RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChat();
 
-        mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().getChatRoomUserList());
+        // Can't load any chatting user.
+        mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), mChatRoomUserList);
         mGridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
 
     }
@@ -42,8 +44,14 @@ public class ChatRoomFragment extends Fragment {
         rvChattingUserList = view.findViewById(R.id.recycleView_chatRoom_user_list);
         rvChattingUserList.setAdapter(mChatRoomAdapter);
         rvChattingUserList.setLayoutManager(mGridLayoutManager);
+        RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
+        mChatRoomUserList = RealTimeDataBaseUtil.getInstance().getChatRoomUserList();
         return view;
     }
 
+    @Override
+    public void onNewChatUserInsertedAtPosition(int position) {
+        mChatRoomAdapter.notifyItemInserted(position);
+    }
 
 }

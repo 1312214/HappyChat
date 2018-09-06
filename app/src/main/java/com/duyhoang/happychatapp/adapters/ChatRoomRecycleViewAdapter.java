@@ -31,14 +31,17 @@ implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener{
 
     @Override
     public int getItemCount() {
-        return mListRoomUser.size();
+        if(mListRoomUser != null)
+            return mListRoomUser.size();
+        else
+            return 0;
     }
 
     @NonNull
     @Override
     public RoomUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
-        RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
+
         return new RoomUserViewHolder(rootView);
     }
 
@@ -54,10 +57,7 @@ implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener{
                 .into(holder.imgAvatar);
     }
 
-    @Override
-    public void onNewChatUserInsertedAtPosition(int position) {
-        notifyItemInserted(position);
-    }
+
 
     class RoomUserViewHolder extends RecyclerView.ViewHolder{
 
