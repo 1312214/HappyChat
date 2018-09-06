@@ -12,11 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.CreateTestDataUtil;
 import com.duyhoang.happychatapp.adapters.MessageListRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MessageFragment extends Fragment {
