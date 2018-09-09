@@ -25,5 +25,8 @@
     <string name="add_friend">Add Friend</string>
     <string name="see_profile">See Profile</string>
     <string name="cancel">Cancel</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="demo_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  </string>
+    <string name="view_profile">View Profile</string>
 
 </resources>

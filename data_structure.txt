@@ -6,13 +6,12 @@ User {
 }
 
 message {
-	msgID1 {sender, content, date,  userid}
-	msgID2 {imageUrl}
+	msgID1 {content, type, date, senderid, sendername} // , if type =1 TextMsg else  == 2 imageMsg
+	msgID2 {imageUrl, type, date, senderid, sendername}
 }
 
 
 chatRoom {
-	name:
 	member: {
 		userid1: true, 
 		userid2: true,
@@ -20,7 +19,7 @@ chatRoom {
 }
 
 
-Friend{
+Contact{
 	userid1: {
 		userid2: true,
 		userid3: true,
@@ -28,10 +27,33 @@ Friend{
 
 }
 
-//Meanning: 1 User co lastest message nao.
-LatestMessage {
-	userid1 : {
-		msgID1: true, // nếu 2 message cùng 1 user thì thế nào?
-		msgID2: true
+
+User_Chanel {
+	userid1: {
+		userid2: idChanel1,
+		userid3: idChanel2,
 	}
 }
+
+Chanels {
+	idChanel1 {
+		user1: userid1,
+		user2: userid2
+		lastest: Msgid4 , // the lastest message
+		chanel_message_id: idMessageChanel
+	}
+
+}
+
+
+Chanel _Message {
+	idMessageChanel: {
+		msgID1: true,
+		msgID2: true,
+		msgID5: true,
+	}
+	
+}
+
+
+

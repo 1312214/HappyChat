@@ -2,8 +2,10 @@ package com.duyhoang.happychatapp.models;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.Serializable;
+
 // This class is used for ContactFragment, ChatRoomFragment
-public class ChattingUser {
+public class ChattingUser implements Serializable{
 
     private String uid;
     private String email;

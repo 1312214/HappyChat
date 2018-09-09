@@ -1,5 +1,6 @@
 package com.duyhoang.happychatapp.activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -104,7 +105,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void seeProfile(ChattingUser selectedUser) {
-
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("profile_userid", selectedUser.getUid());
+        startActivity(intent);
     }
 
     private void addNewFriend(ChattingUser selectedUser) {

@@ -19,7 +19,8 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
 
     private List<ChattingUser> mContactList;
     private Context mContext;
-
+    private int mSelectedUser;
+    private ContactRecycleViewAdapterCallback mContactRecycleViewAdapterCallback;
 
 
     public ContactRecycleViewAdapter(Context context, List<ChattingUser> contactList){
@@ -37,7 +38,18 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
     @Override
     public ContactItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_contact_row_item, parent, false);
-        return new ContactItemViewHolder(rootView);
+        final ContactItemViewHolder viewHolder = new ContactItemViewHolder(rootView);
+
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSelectedUser = viewHolder.getAdapterPosition();
+                if(mContactRecycleViewAdapterCallback != null)
+                    mContactRecycleViewAdapterCallback.onContactItemSelected(mContactList.get(mSelectedUser));
+            }
+        });
+
+        return viewHolder;
     }
 
 
@@ -67,4 +79,17 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
         }
 
     }
+
+
+    public interface ContactRecycleViewAdapterCallback {
+        void onContactItemSelected(ChattingUser selectedContact);
+    }
+
+    public void setContactRecycleViewAdapterCallback(ContactRecycleViewAdapterCallback callback) {
+        mContactRecycleViewAdapterCallback = callback;
+    }
+
+
+
+
 }

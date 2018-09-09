@@ -38,7 +38,7 @@
                     android:id="@+id/edit_text_login_email"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:background="@drawable/rounded_white_rect"
+                    android:background="@drawable/rounded_grey_rect"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:drawableLeft="@drawable/ic_email"
@@ -50,13 +50,14 @@
                     android:paddingTop="10dp"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="40dp"
+                    android:nextFocusForward="@id/edit_text_login_password"/>
 
                 <EditText
                     android:id="@+id/edit_text_login_password"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:background="@drawable/rounded_white_rect"
+                    android:background="@drawable/rounded_grey_rect"
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:drawableLeft="@drawable/ic_password"
@@ -68,7 +69,8 @@
                     android:paddingTop="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"/>
+                    android:layout_marginRight="15dp"
+                    android:nextFocusForward="@id/button_login_login"/>
 
                 <Button
                     android:id="@+id/button_login_login"

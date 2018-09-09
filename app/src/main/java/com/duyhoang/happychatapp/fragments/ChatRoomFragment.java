@@ -40,7 +40,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         RealTimeDataBaseUtil.getInstance().setMakingToastListener(this);
 
         // Loading list of room chat user from realtime database into mChattingUserList;
-        RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChat();
+        RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
         mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().mChatRoomUserList);
         mGridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
         mChatRoomAdapter.setChatRoomRecycleViewListener(this);
