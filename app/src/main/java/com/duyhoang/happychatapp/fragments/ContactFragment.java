@@ -18,8 +18,6 @@ import com.duyhoang.happychatapp.activities.ChatChanelActivity;
 import com.duyhoang.happychatapp.adapters.ContactRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;
 
-import java.util.List;
-
 public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.ContactListChangedListener,
         ContactRecycleViewAdapter.ContactRecycleViewAdapterCallback{
 
@@ -49,7 +47,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
-        rvContactList = view.findViewById(R.id.recycleView_contact_list);
+        rvContactList = view.findViewById(R.id.recyclerView_contact_list);
         rvContactList.setAdapter(mChatRoomAdapter);
         rvContactList.setLayoutManager(mLinearLayoutManager);
         return view;

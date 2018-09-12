@@ -20,7 +20,9 @@ import com.duyhoang.happychatapp.models.Message.Message;
 import com.duyhoang.happychatapp.models.Message.TextMessage;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -30,6 +32,8 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
 
     // the guest who is chatting with you.
     private ChattingUser guest;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm - MMM dd, yyyy", Locale.getDefault());
+
 
     public ChatChanelRecycleViewAdapter(Context context, List<Message> messageCatalog, ChattingUser guest) {
         mContext = context;
@@ -87,8 +91,9 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
 
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         Message msg = mMessageCatalog.get(position);
+
         if(holder instanceof GuestTextMessageViewHolder) {
 
             ((GuestTextMessageViewHolder) holder).txtContent.setText(((TextMessage)msg).getContent());
@@ -97,19 +102,59 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
                     .centerCrop()
                     .placeholder(R.drawable.ic_account_circle_grey_40dp)
                     .into(((GuestTextMessageViewHolder) holder).imgAvatar);
+            ((GuestTextMessageViewHolder) holder).txtContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(!((GuestTextMessageViewHolder) holder).visibleTimeFlag) {
+                        ((GuestTextMessageViewHolder) holder).txtTime.setVisibility(View.VISIBLE);
+                        ((GuestTextMessageViewHolder) holder).visibleTimeFlag = true;
+                    } else {
+                        ((GuestTextMessageViewHolder) holder).txtTime.setVisibility(View.INVISIBLE);
+                        ((GuestTextMessageViewHolder) holder).visibleTimeFlag = false;
+                    }
+                }
+            });
+            ((GuestTextMessageViewHolder) holder).txtTime.setText(simpleDateFormat.format(msg.getTime()));
 
         } else if(holder instanceof HostTextMessageViewHolder) {
 
             ((HostTextMessageViewHolder) holder).txtContent.setText(((TextMessage)msg).getContent());
+            ((HostTextMessageViewHolder) holder).txtContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(!((HostTextMessageViewHolder) holder).visibleTimeFlag) {
+                        ((HostTextMessageViewHolder) holder).txtTime.setVisibility(View.VISIBLE);
+                        ((HostTextMessageViewHolder) holder).visibleTimeFlag = true;
+                    } else {
+                        ((HostTextMessageViewHolder) holder).txtTime.setVisibility(View.INVISIBLE);
+                        ((HostTextMessageViewHolder) holder).visibleTimeFlag = false;
+                    }
+                }
+            });
+            ((HostTextMessageViewHolder) holder).txtTime.setText(simpleDateFormat.format(msg.getTime()));
 
         } else if(holder instanceof ImageMessageViewHolder) {
 
             Picasso.get().load(((ImageMessage)msg).getPhotoUrl())
                     .placeholder(R.drawable.ic_image_grey_250dp)
                     .into(((ImageMessageViewHolder) holder).imgImage);
+            ((ImageMessageViewHolder) holder).imgImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(!((ImageMessageViewHolder) holder).visibleTimeFlag) {
+                        ((ImageMessageViewHolder) holder).txtTime.setVisibility(View.VISIBLE);
+                        ((ImageMessageViewHolder) holder).visibleTimeFlag = true;
+                    } else {
+                        ((ImageMessageViewHolder) holder).txtTime.setVisibility(View.INVISIBLE);
+                        ((ImageMessageViewHolder) holder).visibleTimeFlag = false;
+                    }
+                }
+            });
+            ((ImageMessageViewHolder) holder).txtTime.setText(simpleDateFormat.format(msg.getTime()));
         }
 
     }
+
 
 
     @Override
@@ -122,10 +167,6 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
 
 
 
-    public Message getMessageDataAtPostion(int position) {
-        return mMessageCatalog.get(position);
-    }
-
     public String getGuestId() {
         return guest.getUid();
     }
@@ -134,32 +175,38 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
 
     class GuestTextMessageViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;
-        TextView txtContent;
+        TextView txtContent, txtTime;
+        boolean visibleTimeFlag;
 
         public GuestTextMessageViewHolder(View item) {
             super(item);
-
             imgAvatar = item.findViewById(R.id.imageView_chatChanel_avatar);
             txtContent = item.findViewById(R.id.textView_chatChanel_guest_content);
+            txtTime = item.findViewById(R.id.textView_chatChanel_guest_time);
         }
     }
 
 
     class HostTextMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView txtContent;
+        TextView txtContent, txtTime;
+        boolean visibleTimeFlag;
 
         public HostTextMessageViewHolder(View item) {
             super(item);
             txtContent = item.findViewById(R.id.textView_chatChanel_host_content);
+            txtTime = item.findViewById(R.id.textView_chatChanel_host_time);
         }
     }
 
     class ImageMessageViewHolder extends RecyclerView.ViewHolder {
         ImageView imgImage;
+        TextView txtTime;
+        boolean visibleTimeFlag;
 
         public ImageMessageViewHolder(View item) {
             super(item);
-            imgImage = item.findViewById(R.id.imageView_chatChanel_image);
+            imgImage = item.findViewById(R.id.imageView_chatChanel_imageMsg_image);
+            txtTime = item.findViewById(R.id.textView_chatChanel_imageMsg_time);
         }
     }
 

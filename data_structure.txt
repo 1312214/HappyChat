@@ -1,13 +1,11 @@
 
-
-
 User {
 		userid1 {displayname, email, photourl}
 }
 
 message {
-	msgID1 {content, type, date, senderid, sendername} // , if type =1 TextMsg else  == 2 imageMsg
-	msgID2 {imageUrl, type, date, senderid, sendername}
+	msgID1 {content, type, date, senderid, sendername, chanelid} // , if type =1 TextMsg else  == 2 imageMsg
+	msgID2 {imageUrl, type, date, senderid, sendername, chanelid}
 }
 
 
@@ -33,13 +31,17 @@ User_Chanel {
 		userid2: idChanel1,
 		userid3: idChanel2,
 	}
+	
+	userid2: {
+		userid1: idChanel1,
+	}
 }
 
 Chanels {
 	idChanel1 {
 		user1: userid1,
 		user2: userid2
-		lastest: Msgid4 , // the lastest message
+		lastest_message: Msgid4 , // the lastest message
 		chanel_message_id: idMessageChanel
 	}
 

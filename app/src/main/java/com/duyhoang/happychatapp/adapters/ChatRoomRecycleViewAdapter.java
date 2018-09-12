@@ -37,6 +37,7 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
             return 0;
     }
 
+
     @NonNull
     @Override
     public RoomUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -73,30 +74,10 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
 
 
 
-    class RoomUserViewHolder extends RecyclerView.ViewHolder{
-
-        ImageView imgAvatar;
-        TextView txtDisplayName;
-
-        public RoomUserViewHolder(View item) {
-            super(item);
-            imgAvatar = item.findViewById(R.id.imageView_chatroom_row_item_avatar);
-            txtDisplayName = item.findViewById(R.id.textView_chatroom_row_item_display_name);
-
-        }
-
-
-
-
-    }
-
     public void setChatRoomRecycleViewListener(ChatRoomRecycleViewListener chatRoomRecycleViewListener) {
         mChatRoomRecycleViewListener = chatRoomRecycleViewListener;
     }
 
-    public interface ChatRoomRecycleViewListener {
-        void onChatRoomUserSelected(ChattingUser selectedUser);
-    }
 
     public int getSelectedUser() {
         return mSelectedUser;
@@ -107,5 +88,20 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
         notifyItemRemoved(mSelectedUser);
     }
 
+
+    class RoomUserViewHolder extends RecyclerView.ViewHolder{
+        ImageView imgAvatar;
+        TextView txtDisplayName;
+
+        public RoomUserViewHolder(View item) {
+            super(item);
+            imgAvatar = item.findViewById(R.id.imageView_chatroom_row_item_avatar);
+            txtDisplayName = item.findViewById(R.id.textView_chatroom_row_item_display_name);
+        }
+    }
+
+    public interface ChatRoomRecycleViewListener {
+        void onChatRoomUserSelected(ChattingUser selectedUser);
+    }
 
 }

@@ -87,24 +87,23 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
 
 
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            if(requestCode == RC_GOOGLE_LOGIN) {
-    //            IdpResponse response = IdpResponse.fromResultIntent(data);
-                if(resultCode == RESULT_OK) {
-                    handleWhenLoginSuccessfully();
-                } else {
-                    Log.e(TAG, "Google Login failed");
-                    Toast.makeText(getApplicationContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show();
-                }
-
+        if(requestCode == RC_GOOGLE_LOGIN) {
+            if(resultCode == RESULT_OK) {
+                handleWhenLoginSuccessfully();
             } else {
-                // Pass the activity result back to the Facebook SDK
-                mCallbackManager.onActivityResult(requestCode, resultCode, data);
+                Log.e(TAG, "Google Login failed");
+                Toast.makeText(getApplicationContext(), "Google sign-in failed", Toast.LENGTH_SHORT).show();
             }
+
+        } else {
+            // Pass the activity result back to the Facebook SDK
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
+    }
 
 
     private void initUI() {

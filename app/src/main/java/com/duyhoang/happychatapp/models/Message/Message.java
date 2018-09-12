@@ -10,6 +10,16 @@ public class Message {
     protected String senderName;
     protected Date time;
     protected MESSAGE_TYPE type;
+    protected String chanelId;
+
+
+    public String getChanelId() {
+        return chanelId;
+    }
+
+    public void setChanelId(String chanelId) {
+        this.chanelId = chanelId;
+    }
 
     public String getSenderId() {
         return senderId;

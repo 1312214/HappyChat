@@ -28,5 +28,9 @@
     <string name="write_a_message">Write a message</string>
     <string name="demo_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  </string>
     <string name="view_profile">View Profile</string>
+    <string name="last_message">Last message</string>
+    <string name="time">Time</string>
+    <string name="status">Status</string>
+
 
 </resources>

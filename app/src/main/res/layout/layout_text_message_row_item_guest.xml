@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="5dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -32,6 +32,18 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/black"
             android:layout_marginLeft="3dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_chatChanel_guest_time"
+            android:textSize="13sp"
+            android:text="@string/time"
+            android:textColor="@color/grey_800"
+            android:layout_below="@id/textView_chatChanel_guest_content"
+            android:layout_alignStart="@id/textView_chatChanel_guest_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="3dp"
+            android:visibility="invisible"/>
 
 
     </RelativeLayout>

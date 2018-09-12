@@ -51,10 +51,17 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_room_chat, container, false);
-        rvChattingUserList = view.findViewById(R.id.recycleView_chatRoom_user_list);
+        rvChattingUserList = view.findViewById(R.id.recyclerView_chatRoom_user_list);
         rvChattingUserList.setAdapter(mChatRoomAdapter);
         rvChattingUserList.setLayoutManager(mGridLayoutManager);
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        if(mContext != null) mContext = null;
+        RealTimeDataBaseUtil.getInstance().removeMemberNodeChildEventListener();
+        super.onDetach();
     }
 
     @Override
@@ -70,13 +77,6 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     @Override
     public void onChatRoomUserSelected(ChattingUser selectedUser) {
         ((HomeActivity)mContext).showActionBarMenuForSelectedUser(selectedUser);
-    }
-
-
-    @Override
-    public void onDetach() {
-        if(mContext != null) mContext = null;
-        super.onDetach();
     }
 
 

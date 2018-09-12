@@ -56,7 +56,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Button btnRegister;
     private SignInButton btnGoogleLogin;
     private LoginButton btnFacebookLogin;
-    
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +106,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private void initUI() {
         ActionBar actionBar = getSupportActionBar();

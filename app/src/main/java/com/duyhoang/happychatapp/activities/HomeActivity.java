@@ -14,7 +14,7 @@ import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.fragments.ContactFragment;
 import com.duyhoang.happychatapp.fragments.MyAccountFragment;
-import com.duyhoang.happychatapp.fragments.MessageFragment;
+import com.duyhoang.happychatapp.fragments.LatestMessageListFragment;
 import com.duyhoang.happychatapp.fragments.ChatRoomFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.action_message:
                 mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new MessageFragment(), "messsage_frag")
+                        .replace(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag")
                         .commit();
                 return true;
 
@@ -55,7 +55,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
             case R.id.action_chat_room:
                 mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag")
+                        .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chatty_chanel_frag")
                         .commit();
                 return true;
 
@@ -113,7 +113,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private void addNewFriend(ChattingUser selectedUser) {
         RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUser.getUid());
         mActionBar.hide();
-        ChatRoomFragment fragment = (ChatRoomFragment) getSupportFragmentManager().findFragmentByTag("chat_room_frag");
+        ChatRoomFragment fragment = (ChatRoomFragment) getSupportFragmentManager().findFragmentByTag("chatty_chanel_frag");
         fragment.eliminateChattingRoomUserAddedSuccessfullyFromChatRoom();
 
     }

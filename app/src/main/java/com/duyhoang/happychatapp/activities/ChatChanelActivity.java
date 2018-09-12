@@ -1,7 +1,6 @@
 package com.duyhoang.happychatapp.activities;
 
 import android.content.Intent;
-import android.icu.util.Calendar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -22,7 +20,6 @@ import com.duyhoang.happychatapp.models.Message.Message;
 import com.duyhoang.happychatapp.models.Message.TextMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Date;
 
@@ -33,38 +30,23 @@ public class ChatChanelActivity extends AppCompatActivity implements View.OnClic
     private ImageView imgUploadImage;
     private EditText etInputMessage;
     private ImageView imageSend;
-    private ChattingUser guest;
+    private ChattingUser mGuest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_chanel);
-        guest = (ChattingUser) getIntent().getSerializableExtra("selected_contact");
+        mGuest = (ChattingUser) getIntent().getSerializableExtra("selected_contact");
         initUI();
         RealTimeDataBaseUtil.getInstance().setChattyChanelMessageListListener(this);
-        RealTimeDataBaseUtil.getInstance().downloadMessageChanelWithSelectedContact(guest.getUid());
-        mChatChanelAdapter = new ChatChanelRecycleViewAdapter(this, RealTimeDataBaseUtil.getInstance().mChattyChanelMessageList, guest);
+        RealTimeDataBaseUtil.getInstance().downloadMessageChanelWithSelectedContact(mGuest.getUid());
+        mChatChanelAdapter = new ChatChanelRecycleViewAdapter(this, RealTimeDataBaseUtil.getInstance().mChattyChanelMessageList, mGuest);
         rvMessages.setAdapter(mChatChanelAdapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(this));
         rvMessages.addOnLayoutChangeListener(this);
     }
 
-    private void initUI() {
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(guest.getName());
-        }
 
-
-        rvMessages = findViewById(R.id.recycleView_message_list);
-        imgUploadImage = findViewById(R.id.imageView_chatChanel_upload_image);
-        imageSend = findViewById(R.id.imageView_chatChanel_send);
-        etInputMessage = findViewById(R.id.editText_chatChanel_message_content);
-
-        imageSend.setOnClickListener(this);
-        imgUploadImage.setOnClickListener(this);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,6 +89,28 @@ public class ChatChanelActivity extends AppCompatActivity implements View.OnClic
         super.onStop();
     }
 
+    @Override
+    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+        rvMessages.scrollToPosition(mChatChanelAdapter.getItemCount() - 1);
+    }
+
+    private void initUI() {
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(mGuest.getName());
+        }
+
+        rvMessages = findViewById(R.id.recyclerView_message_list);
+        imgUploadImage = findViewById(R.id.imageView_chatChanel_upload_image);
+        imageSend = findViewById(R.id.imageView_chatChanel_send);
+        etInputMessage = findViewById(R.id.editText_chatChanel_message_content);
+
+        imageSend.setOnClickListener(this);
+        imgUploadImage.setOnClickListener(this);
+    }
+
+
     // implement these and load messages from database.
     private void sendTextMessage() {
         String messageContent = etInputMessage.getText().toString();
@@ -116,7 +120,7 @@ public class ChatChanelActivity extends AppCompatActivity implements View.OnClic
             String senderName = currentUser.getDisplayName();
             Date date = new Date();
             TextMessage msg = new TextMessage(senderId, senderName, date, Message.MESSAGE_TYPE.TEXT, messageContent);
-            RealTimeDataBaseUtil.getInstance().uploadTextMessageToFirebaseDatabase(msg, mChatChanelAdapter.getGuestId());
+            RealTimeDataBaseUtil.getInstance().uploadMessageToFirebaseDatabase(msg, mChatChanelAdapter.getGuestId());
             etInputMessage.setText("");
         }
 
@@ -125,8 +129,5 @@ public class ChatChanelActivity extends AppCompatActivity implements View.OnClic
     private void sendImageMessage() {
     }
 
-    @Override
-    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        rvMessages.scrollToPosition(mChatChanelAdapter.getItemCount() - 1);
-    }
+
 }

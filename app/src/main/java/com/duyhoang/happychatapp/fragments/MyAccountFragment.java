@@ -52,7 +52,11 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
         return view;
     }
 
-
+    @Override
+    public void onDetach() {
+        if(mContext != null) mContext = null;
+        super.onDetach();
+    }
 
     @Override
     public void onClick(View view) {
@@ -60,13 +64,6 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
             case R.id.button_myAccount_log_out: logout();
                 break;
         }
-    }
-
-
-    @Override
-    public void onDetach() {
-        if(mContext != null) mContext = null;
-        super.onDetach();
     }
 
     private void initUI(View view) {
@@ -93,7 +90,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                 }
             });
         }
-
     }
+
 
 }

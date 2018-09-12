@@ -66,6 +66,10 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
 
     }
 
+    public void setContactRecycleViewAdapterCallback(ContactRecycleViewAdapterCallback callback) {
+        mContactRecycleViewAdapterCallback = callback;
+    }
+
     class ContactItemViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;
         TextView txtDisplayName;
@@ -74,22 +78,12 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
             super(item);
             imgAvatar = item.findViewById(R.id.imageView_contact_row_item_avatar);
             txtDisplayName = item.findViewById(R.id.textView_contact_row_item_display_name);
-
-            // set click event here.
         }
 
     }
 
-
     public interface ContactRecycleViewAdapterCallback {
         void onContactItemSelected(ChattingUser selectedContact);
     }
-
-    public void setContactRecycleViewAdapterCallback(ContactRecycleViewAdapterCallback callback) {
-        mContactRecycleViewAdapterCallback = callback;
-    }
-
-
-
 
 }
