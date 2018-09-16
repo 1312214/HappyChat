@@ -3,24 +3,28 @@ package com.duyhoang.happychatapp.activities;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.fragments.ContactFragment;
-import com.duyhoang.happychatapp.fragments.MyAccountFragment;
+import com.duyhoang.happychatapp.fragments.MoreFragment;
 import com.duyhoang.happychatapp.fragments.LatestMessageListFragment;
 import com.duyhoang.happychatapp.fragments.ChatRoomFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
 
-public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
+        ChatRoomFragment.ChatRoomUserSelectedListener{
 
+    public static final String TAG = "HomeActivity";
 
     private AuthUI mAuthUI;
     private BottomNavigationView bottomNavigationView;
@@ -39,6 +43,17 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        Fragment currFragment = mFragmentManager.findFragmentById(R.id.frameLayout_container);
+        if(currFragment instanceof ChatRoomFragment) {
+            mFragmentManager.beginTransaction().remove(currFragment).commit();
+            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag").commit();
+        }
+    }
+
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_message:
@@ -55,13 +70,13 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
             case R.id.action_chat_room:
                 mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chatty_chanel_frag")
+                        .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag")
                         .commit();
                 return true;
 
-            case R.id.action_my_acount:
+            case R.id.action_more:
                 mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new MyAccountFragment(), "my_account_frag")
+                        .replace(R.id.frameLayout_container, new MoreFragment(), "more_frag")
                         .commit();
                 return true;
 
@@ -89,6 +104,21 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
+
+    @Override
+    public void onShowActionBarOptionsForSelectedUser(ChattingUser selectedUser) {
+        mActionBar.show();
+        mActionBar.setTitle("Add \"" + selectedUser.getName() + "\" into Contact? ");
+        mSelectedUser = selectedUser;
+    }
+
+    @Override
+    public void onHideActionBarOptions() {
+        mActionBar.hide();
+        mActionBar.setTitle("");
+        mSelectedUser = null;
+    }
+
     private void initUI() {
         mActionBar = getSupportActionBar();
         if(mActionBar != null) getSupportActionBar().hide();
@@ -98,15 +128,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     }
 
 
-    public void showActionBarMenuForSelectedUser(ChattingUser selectedUser) {
-        mActionBar.show();
-        mActionBar.setTitle("Add \"" + selectedUser.getName() + "\" into Contact? ");
-        mSelectedUser = selectedUser;
-    }
-
     private void seeProfile(ChattingUser selectedUser) {
         Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra("profile_userid", selectedUser.getUid());
+        intent.putExtra("selected_user", selectedUser);
         startActivity(intent);
     }
 

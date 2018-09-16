@@ -9,12 +9,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.activities.LogInActivity;
+import com.duyhoang.happychatapp.activities.ProfileActivity;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,9 +23,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MyAccountFragment extends Fragment implements View.OnClickListener {
+public class MoreFragment extends Fragment implements View.OnClickListener {
 
-    private Button btnLogout;
+    private LinearLayout lnlProfile, lnlLogout, lnlAccountSetting, lnlFeedback, lnlTerms;
 
     private FirebaseAuth mAuth;
     private AuthUI mAuthUI;
@@ -47,7 +48,7 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_my_account, container, false);
+        View view = inflater.inflate(R.layout.fragment_more, container, false);
         initUI(view);
         return view;
     }
@@ -61,15 +62,26 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_myAccount_log_out: logout();
+            case R.id.linearLayout_myAccount_logout: logout();
                 break;
+            case R.id.linearLayout_myAccount_profile: openProfile();
+                break;
+
         }
     }
 
     private void initUI(View view) {
-        btnLogout = view.findViewById(R.id.button_myAccount_log_out);
+        lnlProfile = view.findViewById(R.id.linearLayout_myAccount_profile);
+        lnlAccountSetting = view.findViewById(R.id.linearLayout_myAccount_account_setting);
+        lnlLogout = view.findViewById(R.id.linearLayout_myAccount_logout);
+        lnlFeedback = view.findViewById(R.id.linearLayout_myAccount_feedback);
+        lnlTerms = view.findViewById(R.id.linearLayout_myAccount_terms);
 
-        btnLogout.setOnClickListener(this);
+        lnlProfile.setOnClickListener(this);
+        lnlAccountSetting.setOnClickListener(this);
+        lnlLogout.setOnClickListener(this);
+        lnlFeedback.setOnClickListener(this);
+        lnlTerms.setOnClickListener(this);
     }
 
 
@@ -90,6 +102,12 @@ public class MyAccountFragment extends Fragment implements View.OnClickListener 
                 }
             });
         }
+    }
+
+
+    private void openProfile() {
+        Intent intent = new Intent(mContext, ProfileActivity.class);
+        startActivity(intent);
     }
 
 

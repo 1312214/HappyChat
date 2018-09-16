@@ -22,10 +22,10 @@
         app:showAsAction="ifRoom|withText"
         android:enabled="true"/>
     <item
-        android:id="@+id/action_my_acount"
+        android:id="@+id/action_more"
         android:enabled="true"
-        android:title="@string/my_account"
-        android:icon="@drawable/ic_account_box_black_24dp"
+        android:title="More"
+        android:icon="@drawable/ic_menu_black_24dp"
         app:showAsAction="ifRoom|withText"/>
 
 

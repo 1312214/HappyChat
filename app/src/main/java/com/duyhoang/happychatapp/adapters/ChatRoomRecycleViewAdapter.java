@@ -2,6 +2,8 @@ package com.duyhoang.happychatapp.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -42,14 +45,13 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     @Override
     public RoomUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
+        final View rootView = LayoutInflater.from(mContext).inflate(R.layout.layout_chatroom_row_item, parent, false);
         final RoomUserViewHolder viewHolder = new RoomUserViewHolder(rootView);
 
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mSelectedUser = viewHolder.getAdapterPosition();
-
                 if(mChatRoomRecycleViewListener != null)
                     mChatRoomRecycleViewListener.onChatRoomUserSelected(mListRoomUser.get(mSelectedUser));
             }
@@ -65,10 +67,19 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
         ChattingUser user = mListRoomUser.get(position);
         holder.txtDisplayName.setText(user.getName());
         Picasso.get().load(user.getPhotoUrl())
-                .placeholder(R.drawable.ic_account_circle_black_60dp)
+                .placeholder(R.drawable.ic_account_circle_white_60dp)
                 .resize(60,60)
                 .centerCrop()
                 .into(holder.imgAvatar);
+        if(RealTimeDataBaseUtil.getInstance().mContactIdList.size() != 0){
+            if(RealTimeDataBaseUtil.getInstance().mContactIdList.contains(user.getUid()) || user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
+                ((CardView)holder.itemView).setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_grey_100));
+                holder.imgAvatar.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_account_circle_grey_60dp));
+                holder.txtDisplayName.setTextColor(ContextCompat.getColor(mContext, R.color.grey_500));
+                holder.itemView.setEnabled(false);
+            }
+        }
+
 
     }
 
@@ -84,7 +95,6 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     }
 
     public void updateRoomUserList() {
-        mListRoomUser.remove(mSelectedUser);
         notifyItemRemoved(mSelectedUser);
     }
 

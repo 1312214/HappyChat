@@ -1,0 +1,32 @@
+package com.duyhoang.happychatapp.activities;
+
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+
+public class BaseActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
+    public final int MY_PERMISSION_READ_EXTERNAL_STORAGE = 100;
+
+    protected void runRequestRuntimePermission(final Activity activity, final String[] permissions, final int customRequestCode, String notifiedMessage) {
+        if(permissions.length == 1) {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(activity,permissions[0])) {
+                Snackbar.make(findViewById(android.R.id.content), notifiedMessage, Snackbar.LENGTH_INDEFINITE )
+                        .setAction("Enable", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityCompat.requestPermissions(activity, permissions, customRequestCode);
+                            }
+                        })
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(activity, permissions, customRequestCode);
+            }
+        }
+    }
+
+
+}

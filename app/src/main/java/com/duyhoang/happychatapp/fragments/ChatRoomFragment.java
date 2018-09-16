@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +21,27 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 
 public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
         RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener{
+    public static final String TAG = "ChatRoomFragment";
 
     private RecyclerView rvChattingUserList;
     private ChatRoomRecycleViewAdapter mChatRoomAdapter;
     private GridLayoutManager mGridLayoutManager;
     private Context mContext;
 
+    private ChatRoomUserSelectedListener mListener;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if(context instanceof ChatRoomUserSelectedListener) {
+            mListener = (ChatRoomUserSelectedListener) context;
+        } else {
+            throw new ClassCastException(context.toString() +
+                    "must implement ChatRoomFragment.onShowActionBarOptionsForSelectedUser");
+        }
+
     }
 
     @Override
@@ -38,18 +49,24 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         super.onCreate(savedInstanceState);
         RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
         RealTimeDataBaseUtil.getInstance().setMakingToastListener(this);
-
-        // Loading list of room chat user from realtime database into mChattingUserList;
         RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
+        RealTimeDataBaseUtil.getInstance().downloadContactUserIdList();
         mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().mChatRoomUserList);
         mGridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
         mChatRoomAdapter.setChatRoomRecycleViewListener(this);
+        Log.e(TAG, "On Create");
+
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_room_chat, container, false);
         rvChattingUserList = view.findViewById(R.id.recyclerView_chatRoom_user_list);
         rvChattingUserList.setAdapter(mChatRoomAdapter);
@@ -57,9 +74,11 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         return view;
     }
 
+
     @Override
     public void onDetach() {
         if(mContext != null) mContext = null;
+        if(mListener != null) mListener.onHideActionBarOptions();
         RealTimeDataBaseUtil.getInstance().removeMemberNodeChildEventListener();
         super.onDetach();
     }
@@ -76,11 +95,18 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
 
     @Override
     public void onChatRoomUserSelected(ChattingUser selectedUser) {
-        ((HomeActivity)mContext).showActionBarMenuForSelectedUser(selectedUser);
+        if(mListener != null) mListener.onShowActionBarOptionsForSelectedUser(selectedUser);
     }
 
 
     public void eliminateChattingRoomUserAddedSuccessfullyFromChatRoom() {
         mChatRoomAdapter.updateRoomUserList();
+    }
+
+
+
+    public interface ChatRoomUserSelectedListener {
+        void onShowActionBarOptionsForSelectedUser(ChattingUser selectedUser);
+        void onHideActionBarOptions();
     }
 }

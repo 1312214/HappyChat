@@ -43,6 +43,7 @@ public class RealTimeDataBaseUtil {
     public List<ChattingUser> mContactList;
     public List<Message> mChattyChanelMessageList;
     public List<ChattyChanel> mChattyChanelList;
+    public List<String> mContactIdList;
 
     // Listener
     private ChatRoomUserQuantityChangedListener mChatRoomUserQuantityChangedListener;
@@ -703,7 +704,107 @@ public class RealTimeDataBaseUtil {
     }
 
 
+    public void downloadCurrentUser() {
+        mRefUsers.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    ChattingUser currUser = dataSnapshot.getValue(ChattingUser.class);
+                    if(mDownloadCurrentUserInfoListener != null)
+                        mDownloadCurrentUserInfoListener.onFinishDownloadingCurrentUser(currUser);
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public void downloadContactUserIdList() {
+        mContactIdList = new ArrayList<>();
+        mRefContacts.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChildren()) {
+                    for(DataSnapshot dss : dataSnapshot.getChildren()) {
+                        mContactIdList.add(dss.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public void setDownloadCurrentUserInfoCallback(DownloadCurrentUserInfoListener callback) {
+        this.mDownloadCurrentUserInfoListener = callback;
+    }
+
+    private boolean isHavingSelectedContact;
+    public boolean checkSelectedContactAlreadyAdded(String selectedContactId) {
+        isHavingSelectedContact = false;
+        mRefContacts.child(FirebaseAuth.getInstance().getUid()).child(selectedContactId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                    isHavingSelectedContact = true;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return isHavingSelectedContact;
+    }
+
+    public void updateProfile(final ChattingUser updatedUser) {
+        mRefUsers.child(updatedUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    mRefUsers.child(updatedUser.getUid()).setValue(updatedUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(mUpdatingCompletionListener != null)
+                                mUpdatingCompletionListener.onCompleteUpdatingUser();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public void setUpdatingCompletionListener(UpdatingCompletionListener listener) {
+        mUpdatingCompletionListener = listener;
+    }
+
+    private UpdatingCompletionListener mUpdatingCompletionListener;
+    public interface UpdatingCompletionListener {
+        void onCompleteUpdatingUser();
+    }
+
+    public void setDownloadCurrentUserInfoListener(DownloadCurrentUserInfoListener listener) {
+        mDownloadCurrentUserInfoListener = listener;
+    }
+
+    private DownloadCurrentUserInfoListener mDownloadCurrentUserInfoListener;
+    public interface DownloadCurrentUserInfoListener {
+        void onFinishDownloadingCurrentUser(ChattingUser user);
+    }
 
     public interface ChattyChanelMessageListListener {
         void onNewMessageInserted(int postion);

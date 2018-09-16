@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".activities.ProfileActivity">
 
     <LinearLayout
@@ -15,60 +14,45 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:background="@drawable/light_green_gradient_rect">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:id="@+id/imageView_Profile_avatar"
+                android:id="@+id/imageView_editingProfile_avatar"
                 android:src="@drawable/ic_account_circle_grey_40dp"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="2dp"
                 app:civ_fill_color="@color/white"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="30dp"/>
-            <TextView
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.AppCompatEditText
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView_Profile_full_name"
+                android:id="@+id/editText_editingProfile_full_name"
                 android:text="@string/full_name"
                 android:textColor="@color/white"
-                android:textSize="35sp"
+                android:inputType="textNoSuggestions"
+                android:textSize="28sp"
                 android:fontFamily="sans-serif-light"
-                android:layout_below="@id/imageView_Profile_avatar"
+                android:layout_below="@id/imageView_editingProfile_avatar"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView_Profile_address"
-                android:text="@string/address"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:layout_below="@id/textView_Profile_full_name"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="25dp"/>
-            <ImageButton
-                android:id="@+id/imageButton_profile_edit_profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_mode_edit_white_40dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/transparent_rect_clicked"/>
+                app:backgroundTint="@color/white"/>
+            <android.support.v7.widget.AppCompatEditText
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText_editingProfile_address"
+                android:text="@string/address"
+                android:inputType="textNoSuggestions"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_below="@id/editText_editingProfile_full_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="25dp"
+                app:backgroundTint="@color/white"/>
 
         </RelativeLayout>
-        <Button
-            android:id="@+id/button_profile_add_friend"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:text="@string/add_friend"
-            android:background="@drawable/rouned_40dp_light_blue_rect"
-            android:textColor="@color/white"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"/>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -84,19 +68,15 @@
                 android:textSize="15sp"
                 android:textColor="@color/light_green_A700"
                 android:layout_marginBottom="3dp"/>
-
-            <!--android:text="@string/demo_text"-->
-            <TextView
-                android:id="@+id/textView_Profile_bio"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/editText_editingProfile_bio"
+                android:layout_width="330dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey_400"/>
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:text="@string/demo_text"
+                android:layout_marginBottom="10dp"
+                app:backgroundTint="@color/black"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -114,19 +94,14 @@
                 android:textSize="15sp"
                 android:textColor="@color/light_green_A700"
                 android:layout_marginBottom="3dp"/>
-
-            <!--android:text="@string/support_android_gmail_com"-->
-            <TextView
-                android:id="@+id/textView_Profile_email"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/editText_editingProfile_email"
+                android:layout_width="330dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey_400"/>
+                android:inputType="textEmailAddress|textNoSuggestions"
+                android:text="@string/support_android_gmail_com"
+                android:layout_marginBottom="10dp"
+                app:backgroundTint="@color/black"/>
         </LinearLayout>
 
         <LinearLayout
@@ -144,20 +119,14 @@
                 android:textSize="15sp"
                 android:textColor="@color/light_green_A700"
                 android:layout_marginBottom="3dp"/>
-
-            <!--android:text="@string/single"-->
-            <TextView
-                android:id="@+id/editText_Profile_marital_status"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/editText_editingProfile_marital_status"
+                android:layout_width="330dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey_400"
-                android:layout_marginBottom="15dp"/>
+                android:inputType="textNoSuggestions"
+                android:text="@string/single"
+                android:layout_marginBottom="10dp"
+                app:backgroundTint="@color/black"/>
         </LinearLayout>
 
     </LinearLayout>

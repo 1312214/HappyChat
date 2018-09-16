@@ -33,12 +33,12 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="878787" />
-                            <entry key="height" value="40" />
-                            <entry key="outputName" value="ic_account_circle_grey_40dp" />
+                            <entry key="color" value="999999" />
+                            <entry key="height" value="60" />
+                            <entry key="outputName" value="ic_account_circle_grey_60dp" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\rogerh\Desktop\baseline-meeting_room-24px.svg" />
-                            <entry key="width" value="40" />
+                            <entry key="sourceFile" value="C:\Users\rogerh\Desktop\logout.svg" />
+                            <entry key="width" value="60" />
                           </map>
                         </option>
                       </PersistentState>

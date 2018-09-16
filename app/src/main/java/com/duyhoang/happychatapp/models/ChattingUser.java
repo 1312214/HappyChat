@@ -9,27 +9,70 @@ public class ChattingUser implements Serializable{
 
     private String uid;
     private String email;
-    private String displayName;
+    private String name;
     private String photoUrl;
+
+    private String bio;
+    private String currAddress;
+    private String maritalStatus;
+
 
     public ChattingUser() {
 
     }
 
-
-    public ChattingUser(String uid, String displayName, String email, String photoUrl) {
+    public ChattingUser(String uid, String name, String email, String photoUrl) {
         this.uid = uid;
-        this.displayName = displayName;
+        this.name = name;
         this.email = email;
         this.photoUrl = photoUrl;
     }
 
+
+    public ChattingUser(String uid, String name, String email, String photoUrl, String bio,
+                        String currAddress, String maritalStatus) {
+        this.uid = uid;
+        this.name = name;
+        this.email = email;
+        this.photoUrl = photoUrl;
+        this.bio = bio;
+        this.currAddress = currAddress;
+        this.maritalStatus = maritalStatus;
+    }
+
+
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getCurrAddress() {
+        return currAddress;
+    }
+
+    public void setCurrAddress(String currAddress) {
+        this.currAddress = currAddress;
+    }
+
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
     public String getName() {
-        return displayName;
+        return name;
     }
 
     public void setName(String name) {
-        this.displayName = name;
+        this.name = name;
     }
 
     public String getPhotoUrl() {

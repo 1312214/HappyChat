@@ -1,6 +1,7 @@
 package com.duyhoang.happychatapp.activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
 
-public class ChatChanelActivity extends AppCompatActivity implements View.OnClickListener, RealTimeDataBaseUtil.ChattyChanelMessageListListener, View.OnLayoutChangeListener {
+public class ChatChanelActivity extends BaseActivity implements View.OnClickListener, RealTimeDataBaseUtil.ChattyChanelMessageListListener, View.OnLayoutChangeListener {
 
     private RecyclerView rvMessages;
     private ChatChanelRecycleViewAdapter mChatChanelAdapter;
@@ -57,7 +58,10 @@ public class ChatChanelActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_chatchanel_profile: startActivity(new Intent(this, ProfileActivity.class));
+            case R.id.menu_item_chatchanel_profile:
+                Intent intent = new Intent(this, ProfileActivity.class);
+                intent.putExtra("selected_user", mGuest);
+                startActivity(intent);
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -92,6 +96,12 @@ public class ChatChanelActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
         rvMessages.scrollToPosition(mChatChanelAdapter.getItemCount() - 1);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
     }
 
     private void initUI() {
