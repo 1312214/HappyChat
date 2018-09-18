@@ -10,13 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.activities.ChatChanelActivity;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.duyhoang.happychatapp.models.ChattyChanel;
+import com.duyhoang.happychatapp.models.Message.ImageMessage;
 import com.duyhoang.happychatapp.models.Message.Message;
 import com.duyhoang.happychatapp.models.Message.TextMessage;
-import com.squareup.picasso.Picasso;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,13 +63,17 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
 
         ChattyChanel chattyChanel = mChattyChanelList.get(position);
         holder.txtName.setText(chattyChanel.getGuestUser().getName());
-        //loading image by using Picasso lib
-        Picasso.get().load(chattyChanel.getGuestUser().getPhotoUrl())
+
+        RequestOptions requestOptions = new RequestOptions()
+                .override(60)
                 .placeholder(R.drawable.ic_account_circle_black_60dp)
-                .resize(60, 60)
-                .centerCrop()
+                .centerCrop();
+        Glide.with(mContext)
+                .load(chattyChanel.getGuestUser().getPhotoUrl())
+                .apply(requestOptions)
                 .into(holder.imgAvatar);
-        String lastMessage = getShowingTextFromLastMessage(chattyChanel.getLastestMessage(), chattyChanel.getGuestUser().getUid());
+
+        String lastMessage = getShowingTextFromLastMessage(chattyChanel.getLastestMessage(), chattyChanel.getGuestUser().getUid(), chattyChanel.getGuestUser().getName());
         holder.txtLastMessage.setText(lastMessage);
         String lastTime = getLastTimeFromDateOfLastMessage(chattyChanel.getLastestMessage().getTime());
         holder.txtLastTime.setText(lastTime);
@@ -80,19 +87,19 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
     }
 
 
-    private String getShowingTextFromLastMessage(Message msg, String guestId) {
+    private String getShowingTextFromLastMessage(Message latestMsg, String guestId, String guestName) {
         String rs;
-        if(msg instanceof TextMessage) {
-            if(msg.getSenderId().equals(guestId)) {
-                rs = ((TextMessage)msg).getContent();
+        if(latestMsg instanceof TextMessage) {
+            if(latestMsg.getSenderId().equals(guestId)) {
+                rs = ((TextMessage)latestMsg).getContent();
             } else {
-                rs = "You: " + ((TextMessage)msg).getContent();
+                rs = "You: " + ((TextMessage)latestMsg).getContent();
             }
         } else {
-            if(msg.getSenderId().equals(guestId)) {
-                rs = ((TextMessage)msg).getContent();
+            if(latestMsg.getSenderId().equals(guestId)) {
+                rs = guestName.substring(0, guestName.indexOf(" ")) + " sent a photo";
             } else {
-                rs = "You: " + ((TextMessage)msg).getContent();
+                rs = "You: sent a photo";
             }
         }
 

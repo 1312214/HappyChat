@@ -9,17 +9,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
-import com.duyhoang.happychatapp.fragments.ChatRoomFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
-import com.squareup.picasso.Picasso;
 
 
-public class ProfileActivity extends AppCompatActivity implements RealTimeDataBaseUtil.DownloadCurrentUserInfoListener, View.OnClickListener
-        {
+public class ProfileActivity extends AppCompatActivity implements RealTimeDataBaseUtil.DownloadCurrentUserInfoListener, View.OnClickListener,
+        RealTimeDataBaseUtil.CheckingContactExistenceListener {
 
     private ImageView imgAvatar;
     private TextView txtFullName, txtAddress, txtBio, txtMaritalStatus, txtEmail;
@@ -34,7 +33,8 @@ public class ProfileActivity extends AppCompatActivity implements RealTimeDataBa
         setContentView(R.layout.activity_profile);
         mGuest = (ChattingUser) getIntent().getSerializableExtra("selected_user");
         initUI();
-        if(mGuest != null) {
+        if (mGuest != null) {
+            RealTimeDataBaseUtil.getInstance().setCheckingContactExistenceListener(this);
             showSelectedGuestProfile(mGuest);
         } else {
             btnAddFriend.setVisibility(View.GONE);
@@ -61,48 +61,58 @@ public class ProfileActivity extends AppCompatActivity implements RealTimeDataBa
     }
 
     private void showSelectedGuestProfile(ChattingUser guest) {
-btnEditProfile.setVisibility(View.GONE);
-Picasso.get().load(guest.getPhotoUrl())
-        .placeholder(R.drawable.ic_account_circle_black_60dp)
-        .resize(120, 120)
-        .centerCrop()
-        .into(imgAvatar);
-txtFullName.setText(guest.getName());
-txtEmail.setText(guest.getEmail());
-txtMaritalStatus.setText(guest.getMaritalStatus());
-txtBio.setText(guest.getBio());
-txtAddress.setText(guest.getBio());
-if(RealTimeDataBaseUtil.getInstance().checkSelectedContactAlreadyAdded(mGuest.getUid())) {
-    btnAddFriend.setText("Already added");
-    btnAddFriend.setEnabled(false);
-    btnEditProfile.setVisibility(View.GONE);
-}
-}
+        btnEditProfile.setVisibility(View.GONE);
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(R.drawable.ic_account_circle_black_60dp)
+                .override(120)
+                .centerCrop();
+        Glide.with(this)
+                .load(guest.getPhotoUrl())
+                .apply(requestOptions)
+                .into(imgAvatar);
 
+        txtFullName.setText(guest.getName());
+        txtEmail.setText(guest.getEmail());
+        txtMaritalStatus.setText(guest.getMaritalStatus());
+        txtBio.setText(guest.getBio());
+        txtAddress.setText(guest.getBio());
+        RealTimeDataBaseUtil.getInstance().checkSelectedContactAlreadyAdded(mGuest.getUid());
+    }
 
+    @Override
+    public void onCompleteCheckingContactExistence(boolean isExistent) {
+        if(isExistent){
+            btnAddFriend.setText("Already added");
+            btnAddFriend.setEnabled(false);
+            btnEditProfile.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onFinishDownloadingCurrentUser(ChattingUser user) {
         mCurrUser = user;
-
-        Picasso.get().load(user.getPhotoUrl())
+        RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.ic_account_circle_black_60dp)
-                .resize(120, 120)
-                .centerCrop()
+                .override(120)
+                .centerCrop();
+        Glide.with(this)
+                .load(user.getPhotoUrl())
+                .apply(requestOptions)
                 .into(imgAvatar);
+
         txtFullName.setText(user.getName());
         txtEmail.setText(user.getEmail());
-        if(TextUtils.isEmpty(user.getMaritalStatus()))
+        if (TextUtils.isEmpty(user.getMaritalStatus()))
             txtMaritalStatus.setText("Empty");
         else
             txtMaritalStatus.setText(user.getMaritalStatus());
 
-        if(TextUtils.isEmpty(user.getBio()))
+        if (TextUtils.isEmpty(user.getBio()))
             txtBio.setText("Empty");
         else
             txtBio.setText(user.getBio());
 
-        if(TextUtils.isEmpty(user.getCurrAddress()))
+        if (TextUtils.isEmpty(user.getCurrAddress()))
             txtAddress.setText("No Address");
         else
             txtAddress.setText(user.getCurrAddress());
@@ -111,20 +121,19 @@ if(RealTimeDataBaseUtil.getInstance().checkSelectedContactAlreadyAdded(mGuest.ge
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_profile_add_friend: addNewFriend();
+            case R.id.button_profile_add_friend:
+                addNewFriend();
                 break;
-            case R.id.imageButton_profile_edit_profile: editMyProfile();
+            case R.id.imageButton_profile_edit_profile:
+                editMyProfile();
                 break;
         }
 
     }
 
 
-
-
     private void initUI() {
         getSupportActionBar().hide();
-        RealTimeDataBaseUtil.getInstance().setDownloadCurrentUserInfoCallback(this);
 
         imgAvatar = findViewById(R.id.imageView_Profile_avatar);
         txtFullName = findViewById(R.id.textView_Profile_full_name);

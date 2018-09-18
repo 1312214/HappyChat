@@ -1,7 +1,9 @@
 package com.duyhoang.happychatapp.Utils;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.duyhoang.happychatapp.activities.EditingProfileActivity;
@@ -68,7 +70,7 @@ public class StorageUtil {
     }
 
 
-    private void downloadImageUrlWhenUploadingSuccessfully(UploadTask uploadTask,final StorageReference imgStorageRef, EditingProfileActivity activity ) {
+    private void downloadImageUrlWhenUploadingSuccessfully(UploadTask uploadTask,final StorageReference imgStorageRef, Activity activity ) {
         if(isUploadingSucessful) {
             Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
@@ -95,6 +97,29 @@ public class StorageUtil {
             isUploadingSucessful = false;
         }
     }
+
+    public void uploadMessageImageToStorage(Uri selectedImageUri, final Activity activity){
+       final StorageReference imgRef = mStorage.child("message_images/" + UUID.randomUUID());
+       final UploadTask uploadTask = imgRef.putFile(selectedImageUri);
+       uploadTask.addOnSuccessListener(activity, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+           @Override
+           public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+               isUploadingSucessful = true;
+               downloadImageUrlWhenUploadingSuccessfully(uploadTask, imgRef, activity);
+           }
+       }).addOnFailureListener(activity, new OnFailureListener() {
+           @Override
+           public void onFailure(@NonNull Exception e) {
+               Log.e(TAG, "Uploading image failed");
+               e.printStackTrace();
+           }
+       });
+
+       isUploadingSucessful = false;
+    }
+
+
+
 
 
 

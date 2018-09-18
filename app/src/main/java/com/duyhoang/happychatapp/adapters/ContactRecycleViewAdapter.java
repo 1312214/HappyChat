@@ -9,9 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.models.ChattingUser;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.List;
 
@@ -57,13 +59,14 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
     public void onBindViewHolder(@NonNull ContactItemViewHolder holder, int position) {
         ChattingUser user = mContactList.get(position);
         holder.txtDisplayName.setText(user.getName());
-        Picasso.get()
-                .load(user.getPhotoUrl())
+        RequestOptions requestOptions = new RequestOptions()
+                .override(60)
                 .placeholder(R.drawable.ic_account_circle_black_60dp)
-                .resize(60,60)
-                .centerCrop()
+                .centerCrop();
+        Glide.with(mContext)
+                .load(user.getPhotoUrl())
+                .apply(requestOptions)
                 .into(holder.imgAvatar);
-
     }
 
     public void setContactRecycleViewAdapterCallback(ContactRecycleViewAdapterCallback callback) {

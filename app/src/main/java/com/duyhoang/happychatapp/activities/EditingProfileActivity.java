@@ -7,29 +7,29 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.Utils.StorageUtil;
 import com.duyhoang.happychatapp.fragments.AlertDialogFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
+
 
 public class EditingProfileActivity extends BaseActivity implements AlertDialogFragment.AlertDialogFragmentListener,
-        RealTimeDataBaseUtil.UpdatingCompletionListener, StorageUtil.UploadingProfileImageListener{
+        RealTimeDataBaseUtil.UpdatingCompletionProfileListener, StorageUtil.UploadingProfileImageListener{
 
-    private static final int RC_GALLERY_REQUEST = 1000;
+
 
     private ImageView imgAvatar;
     private AppCompatEditText etFullName, etAddress, etBio, etEmail, etMaritalStatus;
@@ -74,9 +74,12 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_GALLERY_REQUEST && resultCode == RESULT_OK) {
             selectedImageUri = data.getData();
-            Picasso.get().load(selectedImageUri)
-                    .resize(120, 120)
-                    .centerCrop()
+            RequestOptions requestOptions = new RequestOptions()
+                    .override(120)
+                    .centerCrop();
+            Glide.with(this)
+                    .load(selectedImageUri)
+                    .apply(requestOptions)
                     .into(imgAvatar);
         }
     }
@@ -116,10 +119,13 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
             }
         });
 
-        Picasso.get().load(mSentUser.getPhotoUrl())
+        RequestOptions requestOptions = new RequestOptions()
+                .override(120)
                 .placeholder(R.drawable.ic_account_circle_black_60dp)
-                .resize(120,120)
-                .centerCrop()
+                .centerCrop();
+        Glide.with(this)
+                .load(mSentUser.getPhotoUrl())
+                .apply(requestOptions)
                 .into(imgAvatar);
         resetAllEditTextInProfile();
 
@@ -140,13 +146,7 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
 
     }
 
-    private void pickImageInGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        if(intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, RC_GALLERY_REQUEST);
-        }
-    }
+
 
     private void resetAllEditTextInProfile() {
         etFullName.setText("");

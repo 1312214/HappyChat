@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.activities.LogInActivity;
 import com.duyhoang.happychatapp.activities.ProfileActivity;
@@ -91,7 +92,7 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
             user = ChattingUser.valueOf(currentUser);
-//            RealTimeDataBaseUtil.getInstance().removeUserFromChatRoom(user);
+            RealTimeDataBaseUtil.getInstance().removeUserFromChatRoom(user);
 
             // Sign out by the authentication.
             mAuthUI.signOut(mContext).addOnCompleteListener(new OnCompleteListener<Void>() {

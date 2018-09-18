@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:layout_marginTop="2dp">
+    android:layout_marginTop="1dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -30,7 +30,8 @@
             android:text="@string/display_name"
             android:layout_toRightOf="@id/imageView_contact_row_item_avatar"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/black"/>
 
     </RelativeLayout>
 

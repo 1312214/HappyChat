@@ -1,9 +1,13 @@
 package com.duyhoang.happychatapp.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +19,11 @@ import android.widget.ImageView;
 
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.Utils.StorageUtil;
 import com.duyhoang.happychatapp.adapters.ChatChanelRecycleViewAdapter;
+import com.duyhoang.happychatapp.fragments.ViewingMessagePhotoDialogFrag;
 import com.duyhoang.happychatapp.models.ChattingUser;
+import com.duyhoang.happychatapp.models.Message.ImageMessage;
 import com.duyhoang.happychatapp.models.Message.Message;
 import com.duyhoang.happychatapp.models.Message.TextMessage;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,14 +31,21 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
 
-public class ChatChanelActivity extends BaseActivity implements View.OnClickListener, RealTimeDataBaseUtil.ChattyChanelMessageListListener, View.OnLayoutChangeListener {
+public class ChatChanelActivity extends BaseActivity implements View.OnClickListener,
+        RealTimeDataBaseUtil.ChattyChanelMessageListListener,
+        StorageUtil.UploadingProfileImageListener, RealTimeDataBaseUtil.DownloadCurrentUserInfoListener,
+        ChatChanelRecycleViewAdapter.SeeingPhotoListener{
 
     private RecyclerView rvMessages;
     private ChatChanelRecycleViewAdapter mChatChanelAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
     private ImageView imgUploadImage;
     private EditText etInputMessage;
     private ImageView imageSend;
     private ChattingUser mGuest;
+    private Uri selectedImgUri;
+    private ChattingUser currLoginedUser;
+    private boolean isChoosingImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +54,17 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
         mGuest = (ChattingUser) getIntent().getSerializableExtra("selected_contact");
         initUI();
         RealTimeDataBaseUtil.getInstance().setChattyChanelMessageListListener(this);
+        RealTimeDataBaseUtil.getInstance().setDownloadCurrentUserInfoListener(this);
+        StorageUtil.getInstance().setUploadingProfileImageListener(this);
         RealTimeDataBaseUtil.getInstance().downloadMessageChanelWithSelectedContact(mGuest.getUid());
+        RealTimeDataBaseUtil.getInstance().downloadCurrentUser();
+
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mLinearLayoutManager.setStackFromEnd(true);
         mChatChanelAdapter = new ChatChanelRecycleViewAdapter(this, RealTimeDataBaseUtil.getInstance().mChattyChanelMessageList, mGuest);
         rvMessages.setAdapter(mChatChanelAdapter);
-        rvMessages.setLayoutManager(new LinearLayoutManager(this));
-        rvMessages.addOnLayoutChangeListener(this);
+        rvMessages.setLayoutManager(mLinearLayoutManager);
+        mChatChanelAdapter.setSeeingPhotoListener(this);
     }
 
 
@@ -82,26 +102,60 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void onNewMessageInserted(int postion) {
-        mChatChanelAdapter.notifyItemInserted(postion);
-        rvMessages.scrollToPosition(postion);
+    public void onNewMessageInserted(int position) {
+        mChatChanelAdapter.notifyItemInserted(position);
+        rvMessages.scrollToPosition(position);
     }
+
+
 
     @Override
     protected void onStop() {
-        RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();
+        if(!isChoosingImage) {
+            RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();
+        }
         super.onStop();
-    }
 
-    @Override
-    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        rvMessages.scrollToPosition(mChatChanelAdapter.getItemCount() - 1);
     }
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == MY_PERMISSION_READ_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            isChoosingImage = true;
+            pickImageInGallery();
+        }
+    }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RC_GALLERY_REQUEST) {
+            isChoosingImage = false;
+            if(resultCode == RESULT_OK){
+                selectedImgUri = data.getData();
+                StorageUtil.getInstance().uploadMessageImageToStorage(selectedImgUri, this);
+            }
+        }
+    }
+
+
+    @Override
+    public void onCompleteGettingDownloadUrl(String downloadUrl) {
+        ImageMessage imageMessage = new ImageMessage(currLoginedUser.getUid(),
+                currLoginedUser.getName(), new Date(), Message.MESSAGE_TYPE.IMAGE, downloadUrl);
+        RealTimeDataBaseUtil.getInstance().uploadMessageToFirebaseDatabase(imageMessage, mGuest.getUid());
+    }
+
+    @Override
+    public void onFinishDownloadingCurrentUser(ChattingUser user) {
+        currLoginedUser = user;
+    }
+
+    @Override
+    public void onShowImagePhoto(String photoUrl) {
+        showPhotoWithinDialog(photoUrl);
     }
 
     private void initUI() {
@@ -121,7 +175,6 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     }
 
 
-    // implement these and load messages from database.
     private void sendTextMessage() {
         String messageContent = etInputMessage.getText().toString();
         if(messageContent.length() > 0) {
@@ -137,7 +190,24 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     }
 
     private void sendImageMessage() {
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+            isChoosingImage = true;
+            pickImageInGallery();
+        } else {
+            runRequestRuntimePermission(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_READ_EXTERNAL_STORAGE,
+                    "App needs permssion to access your gallery");
+        }
     }
+
+
+    private void showPhotoWithinDialog(String photoUrl) {
+        ViewingMessagePhotoDialogFrag dialogFrag = ViewingMessagePhotoDialogFrag.getInstance(photoUrl);
+        dialogFrag.setStyle(DialogFragment.STYLE_NORMAL, R.style.Dialog_Fullscreen);
+        dialogFrag.show(getSupportFragmentManager(), "viewing_photo_dialog");
+    }
+
+
+
 
 
 }

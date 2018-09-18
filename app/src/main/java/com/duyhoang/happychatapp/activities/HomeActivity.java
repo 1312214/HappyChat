@@ -137,8 +137,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private void addNewFriend(ChattingUser selectedUser) {
         RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUser.getUid());
         mActionBar.hide();
-        ChatRoomFragment fragment = (ChatRoomFragment) getSupportFragmentManager().findFragmentByTag("chatty_chanel_frag");
-        fragment.eliminateChattingRoomUserAddedSuccessfullyFromChatRoom();
+//        ChatRoomFragment fragment = (ChatRoomFragment) getSupportFragmentManager().findFragmentByTag("chatty_chanel_frag");
+//        fragment.eliminateChattingRoomUserAddedSuccessfullyFromChatRoom();
 
     }
 

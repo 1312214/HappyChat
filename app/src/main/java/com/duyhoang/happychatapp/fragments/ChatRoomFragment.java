@@ -99,9 +99,9 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     }
 
 
-    public void eliminateChattingRoomUserAddedSuccessfullyFromChatRoom() {
-        mChatRoomAdapter.updateRoomUserList();
-    }
+//    public void eliminateChattingRoomUserAddedSuccessfullyFromChatRoom() {
+//        mChatRoomAdapter.updateRoomUserList();
+//    }
 
 
 

@@ -4,8 +4,6 @@ import java.util.Date;
 
 public class ImageMessage extends Message {
     private String photoUrl;
-    private String fileName;
-
 
 
     public String getPhotoUrl() {
@@ -17,19 +15,10 @@ public class ImageMessage extends Message {
     }
 
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public ImageMessage() {}
 
-    public ImageMessage(String senderId, String senderName, Date time, MESSAGE_TYPE type, String photoUrl, String fileName) {
+    public ImageMessage(String senderId, String senderName, Date time, MESSAGE_TYPE type, String photoUrl) {
         super(senderId, senderName, time, type);
         this.photoUrl = photoUrl;
-        this.fileName = fileName;
     }
 }

@@ -11,13 +11,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.google.firebase.auth.FirebaseAuth;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRecycleViewAdapter.RoomUserViewHolder> {
 
@@ -66,15 +70,20 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     public void onBindViewHolder(@NonNull RoomUserViewHolder holder, int position) {
         ChattingUser user = mListRoomUser.get(position);
         holder.txtDisplayName.setText(user.getName());
-        Picasso.get().load(user.getPhotoUrl())
-                .placeholder(R.drawable.ic_account_circle_white_60dp)
-                .resize(60,60)
-                .centerCrop()
+
+        RequestOptions requestOptions = new RequestOptions()
+                .override(60)
+                .placeholder(R.drawable.ic_account_circle_grey_60dp)
+                .centerCrop();
+        Glide.with(mContext)
+                .load(user.getPhotoUrl())
+                .apply(requestOptions)
                 .into(holder.imgAvatar);
+
         if(RealTimeDataBaseUtil.getInstance().mContactIdList.size() != 0){
             if(RealTimeDataBaseUtil.getInstance().mContactIdList.contains(user.getUid()) || user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
                 ((CardView)holder.itemView).setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_grey_100));
-                holder.imgAvatar.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_account_circle_grey_60dp));
+                holder.imgAvatar.setCircleBackgroundColor(ContextCompat.getColor(mContext, R.color.grey_200));
                 holder.txtDisplayName.setTextColor(ContextCompat.getColor(mContext, R.color.grey_500));
                 holder.itemView.setEnabled(false);
             }
@@ -90,17 +99,17 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     }
 
 
-    public int getSelectedUser() {
-        return mSelectedUser;
-    }
-
-    public void updateRoomUserList() {
-        notifyItemRemoved(mSelectedUser);
-    }
+//    public int getSelectedUser() {
+//        return mSelectedUser;
+//    }
+//
+//    public void updateRoomUserList() {
+//        notifyItemRemoved(mSelectedUser);
+//    }
 
 
     class RoomUserViewHolder extends RecyclerView.ViewHolder{
-        ImageView imgAvatar;
+        CircleImageView imgAvatar;
         TextView txtDisplayName;
 
         public RoomUserViewHolder(View item) {

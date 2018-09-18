@@ -351,6 +351,7 @@ public class RealTimeDataBaseUtil {
 
 
     public void removeChildEventListenerOnCurrentChanelMessageId() {
+        if(currChanelMessageId != null)
         mRefChanelMessage.child(currChanelMessageId).removeEventListener(childEventListenerAtCurrentChanelMessageId);
     }
 
@@ -443,7 +444,7 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void uploadMessageToFirebaseDatabase(final Message message, final String selectedUid) {
+    public void uploadMessageToFirebaseDatabase(final Message message, final String receiverUserId) {
         // upload new message to the messages table
         // mark id of new message into the chanel_message talble.
         String currUid = FirebaseAuth.getInstance().getUid();
@@ -453,14 +454,14 @@ public class RealTimeDataBaseUtil {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String messageId = mRefMessages.push().getKey();
 
-                if(dataSnapshot.hasChild(selectedUid)) {
-                    String chanelId = dataSnapshot.child(selectedUid).getValue().toString();
-                    getChanelMessageIdByChanelIdThenSaveMessageIdIntoChanelMsgTable(chanelId, messageId);
+                if(dataSnapshot.hasChild(receiverUserId)) {
+                    String chanelId = dataSnapshot.child(receiverUserId).getValue().toString();
+                    getnsaveChanelMessageIdByChanelIdThenSaveMessageIdIntoChanelMsgTable(chanelId, messageId);
                     message.setChanelId(chanelId);
                     mRefMessages.child(messageId).setValue(message);
                     mRefChanels.child(chanelId).child("latest_message").setValue(messageId);
                 } else {
-                    createNewChanelAndSaveCurrentMessage(FirebaseAuth.getInstance().getUid(), selectedUid, messageId, message);
+                    createNewChanelAndSaveCurrentMessage(FirebaseAuth.getInstance().getUid(), receiverUserId, messageId, message);
                 }
 
 
@@ -474,7 +475,7 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    private void getChanelMessageIdByChanelIdThenSaveMessageIdIntoChanelMsgTable(String chanelId, final String messageId) {
+    private void getnsaveChanelMessageIdByChanelIdThenSaveMessageIdIntoChanelMsgTable(String chanelId, final String messageId) {
         mRefChanels.child(chanelId).child("chanel_message_id").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -743,18 +744,19 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void setDownloadCurrentUserInfoCallback(DownloadCurrentUserInfoListener callback) {
-        this.mDownloadCurrentUserInfoListener = callback;
-    }
 
-    private boolean isHavingSelectedContact;
-    public boolean checkSelectedContactAlreadyAdded(String selectedContactId) {
-        isHavingSelectedContact = false;
+
+
+    public void checkSelectedContactAlreadyAdded(String selectedContactId) {
+
         mRefContacts.child(FirebaseAuth.getInstance().getUid()).child(selectedContactId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                    isHavingSelectedContact = true;
+                if(dataSnapshot.exists()){
+                    if(mCheckingContactExistenceListener != null)
+                        mCheckingContactExistenceListener.onCompleteCheckingContactExistence(true);
+                }
+
             }
 
             @Override
@@ -762,7 +764,7 @@ public class RealTimeDataBaseUtil {
 
             }
         });
-        return isHavingSelectedContact;
+
     }
 
     public void updateProfile(final ChattingUser updatedUser) {
@@ -773,8 +775,8 @@ public class RealTimeDataBaseUtil {
                     mRefUsers.child(updatedUser.getUid()).setValue(updatedUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(mUpdatingCompletionListener != null)
-                                mUpdatingCompletionListener.onCompleteUpdatingUser();
+                            if(mUpdatingCompletionProfileListener != null)
+                                mUpdatingCompletionProfileListener.onCompleteUpdatingUser();
                         }
                     });
                 }
@@ -788,12 +790,24 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void setUpdatingCompletionListener(UpdatingCompletionListener listener) {
-        mUpdatingCompletionListener = listener;
+
+    public void setCheckingContactExistenceListener(CheckingContactExistenceListener listener){
+        mCheckingContactExistenceListener = listener;
     }
 
-    private UpdatingCompletionListener mUpdatingCompletionListener;
-    public interface UpdatingCompletionListener {
+    private CheckingContactExistenceListener mCheckingContactExistenceListener;
+
+    public interface CheckingContactExistenceListener {
+        void onCompleteCheckingContactExistence(boolean isExistent);
+    }
+
+
+    public void setUpdatingCompletionListener(UpdatingCompletionProfileListener listener) {
+        mUpdatingCompletionProfileListener = listener;
+    }
+
+    private UpdatingCompletionProfileListener mUpdatingCompletionProfileListener;
+    public interface UpdatingCompletionProfileListener {
         void onCompleteUpdatingUser();
     }
 
