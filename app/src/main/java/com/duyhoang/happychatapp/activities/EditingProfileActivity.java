@@ -19,9 +19,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
-import com.duyhoang.happychatapp.Utils.StorageUtil;
-import com.duyhoang.happychatapp.fragments.AlertDialogFragment;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.StorageUtil;
+import com.duyhoang.happychatapp.fragments.dialog.AlertDialogFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.google.firebase.auth.FirebaseAuth;
 

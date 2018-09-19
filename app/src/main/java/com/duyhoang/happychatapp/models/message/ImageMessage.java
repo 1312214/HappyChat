@@ -1,4 +1,4 @@
-package com.duyhoang.happychatapp.models.Message;
+package com.duyhoang.happychatapp.models.message;
 
 import java.util.Date;
 
@@ -17,8 +17,8 @@ public class ImageMessage extends Message {
 
     public ImageMessage() {}
 
-    public ImageMessage(String senderId, String senderName, Date time, MESSAGE_TYPE type, String photoUrl) {
-        super(senderId, senderName, time, type);
+    public ImageMessage(String senderId, String senderName, Date time, MESSAGE_TYPE type, String photoUrl, boolean isRead) {
+        super(senderId, senderName, time, type, isRead);
         this.photoUrl = photoUrl;
     }
 }

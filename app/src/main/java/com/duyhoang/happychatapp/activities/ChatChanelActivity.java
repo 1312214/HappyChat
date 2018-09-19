@@ -18,14 +18,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
-import com.duyhoang.happychatapp.Utils.StorageUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.StorageUtil;
 import com.duyhoang.happychatapp.adapters.ChatChanelRecycleViewAdapter;
-import com.duyhoang.happychatapp.fragments.ViewingMessagePhotoDialogFrag;
+import com.duyhoang.happychatapp.fragments.dialog.ViewingMessagePhotoDialogFrag;
 import com.duyhoang.happychatapp.models.ChattingUser;
-import com.duyhoang.happychatapp.models.Message.ImageMessage;
-import com.duyhoang.happychatapp.models.Message.Message;
-import com.duyhoang.happychatapp.models.Message.TextMessage;
+import com.duyhoang.happychatapp.models.message.ImageMessage;
+import com.duyhoang.happychatapp.models.message.Message;
+import com.duyhoang.happychatapp.models.message.TextMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -144,7 +144,7 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onCompleteGettingDownloadUrl(String downloadUrl) {
         ImageMessage imageMessage = new ImageMessage(currLoginedUser.getUid(),
-                currLoginedUser.getName(), new Date(), Message.MESSAGE_TYPE.IMAGE, downloadUrl);
+                currLoginedUser.getName(), new Date(), Message.MESSAGE_TYPE.IMAGE, downloadUrl, false);
         RealTimeDataBaseUtil.getInstance().uploadMessageToFirebaseDatabase(imageMessage, mGuest.getUid());
     }
 
@@ -182,7 +182,7 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
             String senderId = currentUser.getUid();
             String senderName = currentUser.getDisplayName();
             Date date = new Date();
-            TextMessage msg = new TextMessage(senderId, senderName, date, Message.MESSAGE_TYPE.TEXT, messageContent);
+            TextMessage msg = new TextMessage(senderId, senderName, date, Message.MESSAGE_TYPE.TEXT, messageContent, false);
             RealTimeDataBaseUtil.getInstance().uploadMessageToFirebaseDatabase(msg, mChatChanelAdapter.getGuestId());
             etInputMessage.setText("");
         }

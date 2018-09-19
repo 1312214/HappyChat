@@ -14,8 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
-import com.duyhoang.happychatapp.activities.HomeActivity;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.adapters.ChatRoomRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;
 

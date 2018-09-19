@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.adapters.ChattyChanelListRecycleViewAdapter;
 
 public class LatestMessageListFragment extends Fragment implements RealTimeDataBaseUtil.ChattyChanelListListener{
@@ -32,8 +32,8 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
         RealTimeDataBaseUtil.getInstance().setChattyChanelListListener(this);
+        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
         mChattyChanelListAdapter = new ChattyChanelListRecycleViewAdapter(mContext, RealTimeDataBaseUtil.getInstance().mChattyChanelList);
 
     }

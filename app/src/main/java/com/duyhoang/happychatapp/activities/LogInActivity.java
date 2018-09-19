@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 import com.duyhoang.happychatapp.AppConfig;
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
-import com.duyhoang.happychatapp.Utils.ValidationUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.ValidationUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

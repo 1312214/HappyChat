@@ -1,4 +1,4 @@
-package com.duyhoang.happychatapp.fragments;
+package com.duyhoang.happychatapp.fragments.dialog;
 
 
 

@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.activities.ChatChanelActivity;
 import com.duyhoang.happychatapp.adapters.ContactRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;

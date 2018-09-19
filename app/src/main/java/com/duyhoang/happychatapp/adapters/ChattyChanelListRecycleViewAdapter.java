@@ -2,7 +2,9 @@ package com.duyhoang.happychatapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +18,8 @@ import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.activities.ChatChanelActivity;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.duyhoang.happychatapp.models.ChattyChanel;
-import com.duyhoang.happychatapp.models.Message.ImageMessage;
-import com.duyhoang.happychatapp.models.Message.Message;
-import com.duyhoang.happychatapp.models.Message.TextMessage;
+import com.duyhoang.happychatapp.models.message.Message;
+import com.duyhoang.happychatapp.models.message.TextMessage;
 
 
 import java.text.SimpleDateFormat;
@@ -43,25 +44,14 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
     @Override
     public ChattyChanelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_message_row_item, parent, false);
-        final ChattyChanelViewHolder viewHolder = new ChattyChanelViewHolder(itemView);
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ChattingUser guestUser = mChattyChanelList.get(viewHolder.getAdapterPosition()).getGuestUser();
-                Intent intent = new Intent(mContext, ChatChanelActivity.class);
-                intent.putExtra("selected_contact", guestUser);
-                mContext.startActivity(intent);
-            }
-        });
-
-        return viewHolder;
+        return new ChattyChanelViewHolder(itemView);
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull ChattyChanelViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ChattyChanelViewHolder holder, int position) {
 
-        ChattyChanel chattyChanel = mChattyChanelList.get(position);
+        final ChattyChanel chattyChanel = mChattyChanelList.get(position);
         holder.txtName.setText(chattyChanel.getGuestUser().getName());
 
         RequestOptions requestOptions = new RequestOptions()
@@ -77,6 +67,26 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
         holder.txtLastMessage.setText(lastMessage);
         String lastTime = getLastTimeFromDateOfLastMessage(chattyChanel.getLastestMessage().getTime());
         holder.txtLastTime.setText(lastTime);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChattingUser guestUser = mChattyChanelList.get(holder.getAdapterPosition()).getGuestUser();
+                Intent intent = new Intent(mContext, ChatChanelActivity.class);
+                intent.putExtra("selected_contact", guestUser);
+                mContext.startActivity(intent);
+            }
+        });
+
+        if(!chattyChanel.getLastestMessage().isRead()){
+            if(chattyChanel.getLastestMessage().getSenderId().equals(chattyChanel.getGuestUser().getUid())){
+                holder.txtName.setTypeface(holder.txtName.getTypeface(), Typeface.BOLD);
+                holder.txtLastMessage.setTextColor(ActivityCompat.getColor(mContext, R.color.black));
+                holder.txtLastTime.setTextColor(ActivityCompat.getColor(mContext, R.color.green_A400));
+            }
+        }
+
+
     }
 
     @Override

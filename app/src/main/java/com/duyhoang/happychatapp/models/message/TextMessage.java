@@ -1,4 +1,4 @@
-package com.duyhoang.happychatapp.models.Message;
+package com.duyhoang.happychatapp.models.message;
 
 import java.util.Date;
 
@@ -15,8 +15,8 @@ public class TextMessage extends Message {
     }
 
     public TextMessage() {}
-    public TextMessage(String senderId, String senderName, Date time, MESSAGE_TYPE type, String content) {
-        super(senderId, senderName, time, type);
+    public TextMessage(String senderId, String senderName, Date time, MESSAGE_TYPE type, String content, boolean isRead) {
+        super(senderId, senderName, time, type, isRead);
         this.content = content;
     }
 }

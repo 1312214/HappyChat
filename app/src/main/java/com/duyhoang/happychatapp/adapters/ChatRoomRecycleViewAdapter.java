@@ -8,13 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -97,15 +96,6 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     public void setChatRoomRecycleViewListener(ChatRoomRecycleViewListener chatRoomRecycleViewListener) {
         mChatRoomRecycleViewListener = chatRoomRecycleViewListener;
     }
-
-
-//    public int getSelectedUser() {
-//        return mSelectedUser;
-//    }
-//
-//    public void updateRoomUserList() {
-//        notifyItemRemoved(mSelectedUser);
-//    }
 
 
     class RoomUserViewHolder extends RecyclerView.ViewHolder{

@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
 
 

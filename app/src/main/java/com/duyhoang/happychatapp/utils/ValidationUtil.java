@@ -1,4 +1,4 @@
-package com.duyhoang.happychatapp.Utils;
+package com.duyhoang.happychatapp.utils;
 
 import android.text.TextUtils;
 

@@ -1,6 +1,6 @@
 package com.duyhoang.happychatapp.models;
 
-import com.duyhoang.happychatapp.models.Message.Message;
+import com.duyhoang.happychatapp.models.message.Message;
 
 import java.util.Comparator;
 import java.util.Date;

@@ -16,9 +16,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.models.ChattingUser;
-import com.duyhoang.happychatapp.models.Message.ImageMessage;
-import com.duyhoang.happychatapp.models.Message.Message;
-import com.duyhoang.happychatapp.models.Message.TextMessage;
+import com.duyhoang.happychatapp.models.message.ImageMessage;
+import com.duyhoang.happychatapp.models.message.Message;
+import com.duyhoang.happychatapp.models.message.TextMessage;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -102,6 +103,9 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         final Message msg = mMessageCatalog.get(position);
+        if(!msg.isRead() && msg.getSenderId().equals(guest.getUid())){
+            RealTimeDataBaseUtil.getInstance().markAsReadForMessage(msg.getMsgId());
+        }
 
         if(holder instanceof GuestTextMessageViewHolder) {
 

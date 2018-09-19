@@ -8,12 +8,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.Utils.RealTimeDataBaseUtil;
+import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.fragments.ContactFragment;
 import com.duyhoang.happychatapp.fragments.MoreFragment;
 import com.duyhoang.happychatapp.fragments.LatestMessageListFragment;
@@ -26,7 +25,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     public static final String TAG = "HomeActivity";
 
-    private AuthUI mAuthUI;
     private BottomNavigationView bottomNavigationView;
     private FragmentManager mFragmentManager;
     private ActionBar mActionBar;
@@ -36,7 +34,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        mAuthUI = AuthUI.getInstance();
         mFragmentManager = getSupportFragmentManager();
         initUI();
 
@@ -49,6 +46,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         if(currFragment instanceof ChatRoomFragment) {
             mFragmentManager.beginTransaction().remove(currFragment).commit();
             mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag").commit();
+        } else if(currFragment instanceof LatestMessageListFragment){
+            mFragmentManager.beginTransaction().remove(currFragment).commit();
+            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag").commit();
         }
     }
 

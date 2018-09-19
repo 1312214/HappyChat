@@ -1,4 +1,4 @@
-package com.duyhoang.happychatapp.models.Message;
+package com.duyhoang.happychatapp.models.message;
 
 import java.util.Date;
 
@@ -6,12 +6,31 @@ public class Message {
 
     public enum MESSAGE_TYPE {IMAGE, TEXT};
 
+
+    protected String msgId;
     protected String senderId;
     protected String senderName;
     protected Date time;
     protected MESSAGE_TYPE type;
     protected String chanelId;
+    protected boolean isRead;
 
+
+    public String getMsgId() {
+        return msgId;
+    }
+
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 
     public String getChanelId() {
         return chanelId;
@@ -55,11 +74,12 @@ public class Message {
 
     public Message() {}
 
-    public Message(String senderId, String senderName, Date time, MESSAGE_TYPE type) {
+    public Message(String senderId, String senderName, Date time, MESSAGE_TYPE type, boolean isRead) {
         this.senderId = senderId;
         this.senderName = senderName;
         this.time = time;
         this.type = type;
+        this.isRead = isRead;
     }
 
 

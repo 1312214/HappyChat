@@ -1,9 +1,8 @@
-package com.duyhoang.happychatapp.Utils;
+package com.duyhoang.happychatapp.utils;
 
 import android.app.Activity;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.duyhoang.happychatapp.activities.EditingProfileActivity;
@@ -13,7 +12,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
