@@ -86,6 +86,13 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
                 holder.txtDisplayName.setTextColor(ContextCompat.getColor(mContext, R.color.grey_500));
                 holder.itemView.setEnabled(false);
             }
+        } else {
+            if(user.getUid().equals(FirebaseAuth.getInstance().getUid())) {
+                ((CardView)holder.itemView).setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.blue_grey_100));
+                holder.imgAvatar.setCircleBackgroundColor(ContextCompat.getColor(mContext, R.color.grey_200));
+                holder.txtDisplayName.setTextColor(ContextCompat.getColor(mContext, R.color.grey_500));
+                holder.itemView.setEnabled(false);
+            }
         }
 
 

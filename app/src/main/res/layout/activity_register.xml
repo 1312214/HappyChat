@@ -29,7 +29,7 @@
                 android:background="@drawable/rounded_grey_rect"
                 android:hint="@string/username"
                 android:inputType="text"
-                android:drawableLeft="@drawable/ic_email"
+                android:drawableLeft="@drawable/ic_account_box"
                 android:paddingLeft="15dp"
                 android:paddingStart="15dp"
                 android:drawablePadding="10dp"

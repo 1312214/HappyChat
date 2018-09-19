@@ -86,7 +86,6 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
             }
         }
 
-
     }
 
     @Override
@@ -126,15 +125,15 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
 
         // same day case
         if(lastCal.get(Calendar.YEAR) == currCal.get(Calendar.YEAR) && lastCal.get(Calendar.DAY_OF_YEAR) == currCal.get(Calendar.DAY_OF_YEAR)) {
-            return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(currDate);
+            return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(lastDate);
             // same week case
         } else if(lastCal.get(Calendar.YEAR) == currCal.get(Calendar.YEAR) && lastCal.get(Calendar.WEEK_OF_YEAR) == currCal.get(Calendar.WEEK_OF_YEAR)) {
-            return new SimpleDateFormat("EEE", Locale.getDefault()).format(currDate);
+            return new SimpleDateFormat("EEE", Locale.getDefault()).format(lastDate);
             // same year, different in month
         } else if(lastCal.get(Calendar.YEAR) == currCal.get(Calendar.YEAR) && lastCal.get(Calendar.MONTH) != currCal.get(Calendar.MONTH)) {
-            return new SimpleDateFormat("MMM d", Locale.getDefault()).format(currDate);
+            return new SimpleDateFormat("MMM d", Locale.getDefault()).format(lastDate);
         } else {
-            return new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(currDate);
+            return new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(lastDate);
         }
     }
 

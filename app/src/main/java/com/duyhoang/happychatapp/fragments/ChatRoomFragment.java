@@ -19,7 +19,7 @@ import com.duyhoang.happychatapp.adapters.ChatRoomRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;
 
 public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
-        RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener{
+        RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener {
     public static final String TAG = "ChatRoomFragment";
 
     private RecyclerView rvChattingUserList;
@@ -48,20 +48,15 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         super.onCreate(savedInstanceState);
         RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
         RealTimeDataBaseUtil.getInstance().setMakingToastListener(this);
-        RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
+
         RealTimeDataBaseUtil.getInstance().downloadContactUserIdList();
+        RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
         mChatRoomAdapter = new ChatRoomRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().mChatRoomUserList);
         mGridLayoutManager = new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false);
         mChatRoomAdapter.setChatRoomRecycleViewListener(this);
-        Log.e(TAG, "On Create");
-
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Nullable
     @Override
@@ -90,6 +85,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     @Override
     public void onToast(String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+        if(mListener != null) mListener.onRefreshChatRoom();
     }
 
     @Override
@@ -98,14 +94,10 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     }
 
 
-//    public void eliminateChattingRoomUserAddedSuccessfullyFromChatRoom() {
-//        mChatRoomAdapter.updateRoomUserList();
-//    }
-
-
 
     public interface ChatRoomUserSelectedListener {
         void onShowActionBarOptionsForSelectedUser(ChattingUser selectedUser);
         void onHideActionBarOptions();
+        void onRefreshChatRoom();
     }
 }

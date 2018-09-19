@@ -14,7 +14,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/light_green_gradient_rect">
+            android:background="@drawable/light_green_gradient_rect_layer_list">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="120dp"
                 android:layout_height="120dp"

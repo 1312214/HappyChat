@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
-        ChatRoomFragment.ChatRoomUserSelectedListener{
+        ChatRoomFragment.ChatRoomUserSelectedListener, LatestMessageListFragment.RequestRestartLatestMsgFragListener{
 
     public static final String TAG = "HomeActivity";
 
@@ -57,27 +58,37 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_message:
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag")
-                        .commit();
+                if(mFragmentManager.findFragmentByTag("latest_msg_list_frag") == null) {
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag")
+                            .commit();
+                }
+
                 return true;
 
             case R.id.action_my_contact:
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new ContactFragment(), "contact_frag")
-                        .commit();
+                if(mFragmentManager.findFragmentByTag("contact_frag") == null){
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.frameLayout_container, new ContactFragment(), "contact_frag")
+                            .commit();
+                }
+
                 return true;
 
             case R.id.action_chat_room:
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag")
-                        .commit();
+                if(mFragmentManager.findFragmentByTag("chat_room_frag") == null) {
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag")
+                            .commit();
+                }
                 return true;
 
             case R.id.action_more:
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.frameLayout_container, new MoreFragment(), "more_frag")
-                        .commit();
+                if(mFragmentManager.findFragmentByTag("more_frag") == null) {
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.frameLayout_container, new MoreFragment(), "more_frag")
+                            .commit();
+                }
                 return true;
 
         }
@@ -119,6 +130,27 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         mSelectedUser = null;
     }
 
+
+    @Override
+    public void onRefreshChatRoom() {
+        Fragment frag = mFragmentManager.findFragmentByTag("chat_room_frag");
+        if(frag != null) {
+            mFragmentManager.beginTransaction().remove(frag).commit();
+            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag").commit();
+        }
+
+    }
+
+    @Override
+    public void onRestartLatestMsgFrag() {
+        Fragment frag = mFragmentManager.findFragmentByTag("latest_msg_list_frag");
+        if(frag != null) {
+            mFragmentManager.beginTransaction().remove(frag).commit();
+            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag").commit();
+        }
+
+    }
+
     private void initUI() {
         mActionBar = getSupportActionBar();
         if(mActionBar != null) getSupportActionBar().hide();
@@ -137,9 +169,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private void addNewFriend(ChattingUser selectedUser) {
         RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUser.getUid());
         mActionBar.hide();
-//        ChatRoomFragment fragment = (ChatRoomFragment) getSupportFragmentManager().findFragmentByTag("chatty_chanel_frag");
-//        fragment.eliminateChattingRoomUserAddedSuccessfullyFromChatRoom();
-
     }
+
+
 
 }

@@ -64,14 +64,14 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if(mAuth.getCurrentUser() != null) {
+//            startActivity(new Intent(this, HomeActivity.class));
+//            finish();
+//        }
+//    }
 
     @Override
     public void onClick(View view) {

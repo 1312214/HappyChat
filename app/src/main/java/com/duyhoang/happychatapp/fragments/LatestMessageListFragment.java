@@ -16,22 +16,29 @@ import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.adapters.ChattyChanelListRecycleViewAdapter;
 
-public class LatestMessageListFragment extends Fragment implements RealTimeDataBaseUtil.ChattyChanelListListener{
+public class LatestMessageListFragment extends Fragment implements RealTimeDataBaseUtil.ChattyChanelListListener, RealTimeDataBaseUtil.UserChanelNodeOnStoreListener{
 
     private Context mContext;
     private RecyclerView rvChattyChanelList;
     private TextView txtStatus;
     private ChattyChanelListRecycleViewAdapter mChattyChanelListAdapter;
+    private RequestRestartLatestMsgFragListener mListener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if(context instanceof RequestRestartLatestMsgFragListener) {
+            mListener = (RequestRestartLatestMsgFragListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + "must implement RequestRestartLatestMsgFragListener.onRestartLatestMsgFrag");
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RealTimeDataBaseUtil.getInstance().setUserChanelNodeInDatabaseListener(this);
         RealTimeDataBaseUtil.getInstance().setChattyChanelListListener(this);
         RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
         mChattyChanelListAdapter = new ChattyChanelListRecycleViewAdapter(mContext, RealTimeDataBaseUtil.getInstance().mChattyChanelList);
@@ -79,9 +86,20 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
         rvChattyChanelList.setVisibility(View.VISIBLE);
     }
 
+
+    @Override
+    public void onAppearChildNode() {
+        RealTimeDataBaseUtil.getInstance().removeChildValueEventListenerForUserChanelNode();
+        if(mListener != null) mListener.onRestartLatestMsgFrag();
+    }
+
     private void initUI(View root) {
         rvChattyChanelList = root.findViewById(R.id.recyclerView_latest_msg_list);
         txtStatus = root.findViewById(R.id.textView_latestMessage_status);
+    }
+
+    public interface RequestRestartLatestMsgFragListener {
+        void onRestartLatestMsgFrag();
     }
 
 }
