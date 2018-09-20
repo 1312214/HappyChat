@@ -20,10 +20,11 @@ public class AlertDialogFragment extends DialogFragment {
     public AlertDialogFragment() {}
 
 
-    public static AlertDialogFragment getInstance(String title) {
+    public static AlertDialogFragment getInstance(String title, String message) {
         AlertDialogFragment dialogFragment = new AlertDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString("title", title);
+        bundle.putString("message", message);
         dialogFragment.setArguments(bundle);
         return dialogFragment;
     }
@@ -44,10 +45,11 @@ public class AlertDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String title = getArguments().getString("title");
+        String msg = getArguments().getString("message");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(title)
-                .setMessage("Want to save this profile editing?")
+                .setMessage(msg)
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

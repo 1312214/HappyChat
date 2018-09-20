@@ -46,16 +46,5 @@ public class ChattyChanel {
     }
 
 
-    public class SortDescendingByLatestMessageDate implements Comparator<ChattyChanel> {
-        @Override
-        public int compare(ChattyChanel t1, ChattyChanel t2) {
-            Date d1 = t1.lastestMessage.getTime();
-            Date d2 = t2.lastestMessage.getTime();
-            return (d1.compareTo(d2)) * (-1);
-        }
-
-
-    }
-
 
 }

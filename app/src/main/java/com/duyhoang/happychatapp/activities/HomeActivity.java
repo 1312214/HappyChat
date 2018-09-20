@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.fragments.dialog.AlertDialogFragment;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.fragments.ContactFragment;
 import com.duyhoang.happychatapp.fragments.MoreFragment;
@@ -22,7 +23,8 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
-        ChatRoomFragment.ChatRoomUserSelectedListener, LatestMessageListFragment.RequestRestartLatestMsgFragListener{
+        ChatRoomFragment.ChatRoomUserSelectedListener, LatestMessageListFragment.RequestRestartLatestMsgFragListener,
+        AlertDialogFragment.AlertDialogFragmentListener{
 
     public static final String TAG = "HomeActivity";
 
@@ -30,6 +32,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private FragmentManager mFragmentManager;
     private ActionBar mActionBar;
     private ChattingUser mSelectedUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +141,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             mFragmentManager.beginTransaction().remove(frag).commit();
             mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag").commit();
         }
-
     }
 
     @Override
@@ -148,7 +150,12 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             mFragmentManager.beginTransaction().remove(frag).commit();
             mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag").commit();
         }
+    }
 
+
+    @Override
+    public void onPositiveButtonClicked() {
+        ((MoreFragment) mFragmentManager.findFragmentByTag("more_frag")).logout();
     }
 
     private void initUI() {

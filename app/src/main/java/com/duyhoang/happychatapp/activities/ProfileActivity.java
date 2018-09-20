@@ -27,6 +27,7 @@ public class ProfileActivity extends AppCompatActivity implements RealTimeDataBa
     private ChattingUser mGuest;
     private ChattingUser mCurrUser;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +42,6 @@ public class ProfileActivity extends AppCompatActivity implements RealTimeDataBa
             RealTimeDataBaseUtil.getInstance().setDownloadCurrentUserInfoListener(this);
             RealTimeDataBaseUtil.getInstance().downloadCurrentUser();
         }
-
     }
 
     @Override
@@ -49,7 +49,6 @@ public class ProfileActivity extends AppCompatActivity implements RealTimeDataBa
         super.onRestart();
         RealTimeDataBaseUtil.getInstance().setDownloadCurrentUserInfoListener(this);
         RealTimeDataBaseUtil.getInstance().downloadCurrentUser();
-
     }
 
 

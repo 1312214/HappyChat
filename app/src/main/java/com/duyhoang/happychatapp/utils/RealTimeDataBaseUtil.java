@@ -48,10 +48,13 @@ public class RealTimeDataBaseUtil {
     // Listener
     private ChatRoomUserQuantityChangedListener mChatRoomUserQuantityChangedListener;
     private MakingToastListener mMakingToastListener;
-    private ContactListChangedListener mContactListChangedListener;
+    private ContactListListener mContactListListener;
     private ChattyChanelMessageListListener mChattyChanelMessageListListener;
     private ChattyChanelListListener mChattyChanelListListener;
     private UserChanelNodeOnStoreListener mUserChanelNodeInDatabaseListener;
+    private UpdatingCompletionProfileListener mUpdatingCompletionProfileListener;
+    private DownloadCurrentUserInfoListener mDownloadCurrentUserInfoListener;
+    private CheckingContactExistenceListener mCheckingContactExistenceListener;
 
     // Temp variables
     private String currChanelMessageId;
@@ -246,10 +249,14 @@ public class RealTimeDataBaseUtil {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.hasChildren()) {
+                        if(mContactListListener != null) mContactListListener.onExistContact();
                         for(DataSnapshot dss : dataSnapshot.getChildren()) {
                             getnsaveChattingUserFromUsersTableIntoContactList(dss.getKey());
                         }
 
+                    } else {
+                        if(mContactListListener != null)
+                            mContactListListener.onHaveNoContact();
                     }
                 }
 
@@ -269,8 +276,8 @@ public class RealTimeDataBaseUtil {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ChattingUser user = dataSnapshot.getValue(ChattingUser.class);
                 mContactList.add(user);
-                if(mContactListChangedListener != null) {
-                    mContactListChangedListener.onChangeContactListSize(mContactList.size() -1);
+                if(mContactListListener != null) {
+                    mContactListListener.onAddNewContactIntoContactList(mContactList.size() -1);
                 }
 
             }
@@ -283,8 +290,8 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void setContactListChangedListener(ContactListChangedListener contactListChangedListener) {
-        mContactListChangedListener = contactListChangedListener;
+    public void setContactListChangedListener(ContactListListener contactListListener) {
+        mContactListListener = contactListListener;
     }
 
 
@@ -605,7 +612,6 @@ public class RealTimeDataBaseUtil {
     }
 
 
-
     public void removeAllValueEventListenerAttachedToLatestMessageNode() {
         String currUid = FirebaseAuth.getInstance().getUid();
         mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -720,27 +726,16 @@ public class RealTimeDataBaseUtil {
         mCheckingContactExistenceListener = listener;
     }
 
-    private CheckingContactExistenceListener mCheckingContactExistenceListener;
-
-    public interface CheckingContactExistenceListener {
-        void onCompleteCheckingContactExistence(boolean isExistent);
-    }
-
 
     public void setUpdatingCompletionListener(UpdatingCompletionProfileListener listener) {
         mUpdatingCompletionProfileListener = listener;
     }
 
-    private UpdatingCompletionProfileListener mUpdatingCompletionProfileListener;
-    public interface UpdatingCompletionProfileListener {
-        void onCompleteUpdatingUser();
-    }
+
 
     public void setDownloadCurrentUserInfoListener(DownloadCurrentUserInfoListener listener) {
         mDownloadCurrentUserInfoListener = listener;
     }
-
-    private DownloadCurrentUserInfoListener mDownloadCurrentUserInfoListener;
 
 
     public void markAsReadForMessage(String messageId){
@@ -905,6 +900,13 @@ public class RealTimeDataBaseUtil {
         mUserChanelNodeInDatabaseListener = listener;
     }
 
+    public interface CheckingContactExistenceListener {
+        void onCompleteCheckingContactExistence(boolean isExistent);
+    }
+
+    public interface UpdatingCompletionProfileListener {
+        void onCompleteUpdatingUser();
+    }
 
     public interface UserChanelNodeOnStoreListener {
         void onAppearChildNode();
@@ -918,8 +920,10 @@ public class RealTimeDataBaseUtil {
         void onNewMessageInserted(int postion);
     }
 
-    public interface ContactListChangedListener {
-        void onChangeContactListSize(int position);
+    public interface ContactListListener {
+        void onAddNewContactIntoContactList(int position);
+        void onHaveNoContact();
+        void onExistContact();
     }
 
     public interface ChatRoomUserQuantityChangedListener {

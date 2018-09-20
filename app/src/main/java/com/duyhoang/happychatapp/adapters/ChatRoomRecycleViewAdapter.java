@@ -29,6 +29,7 @@ public class ChatRoomRecycleViewAdapter extends RecyclerView.Adapter<ChatRoomRec
     private ChatRoomRecycleViewListener mChatRoomRecycleViewListener;
     private int mSelectedUser;
 
+
     public ChatRoomRecycleViewAdapter(Context context, List<ChattingUser> listRoomUser) {
         mContext = context;
         mListRoomUser = listRoomUser;

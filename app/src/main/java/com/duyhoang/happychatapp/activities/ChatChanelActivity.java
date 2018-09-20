@@ -183,7 +183,7 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
             String senderName = currentUser.getDisplayName();
             Date date = new Date();
             TextMessage msg = new TextMessage(senderId, senderName, date, Message.MESSAGE_TYPE.TEXT, messageContent, false);
-            RealTimeDataBaseUtil.getInstance().uploadMessageToFirebaseDatabase(msg, mChatChanelAdapter.getGuestId());
+            RealTimeDataBaseUtil.getInstance().uploadMessageToFirebaseDatabase(msg, mGuest.getUid());
             etInputMessage.setText("");
         }
 

@@ -194,13 +194,9 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
 
-
-
-    public String getGuestId() {
-        return guest.getUid();
+    public void setSeeingPhotoListener(SeeingPhotoListener listener){
+        mSeeingPhotoListener = listener;
     }
-
-
 
     class GuestTextMessageViewHolder extends RecyclerView.ViewHolder {
         ImageView imgAvatar;
@@ -240,9 +236,6 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
 
-    public void setSeeingPhotoListener(SeeingPhotoListener listener){
-        mSeeingPhotoListener = listener;
-    }
 
     public interface SeeingPhotoListener{
         void onShowImagePhoto(String photoUrl);

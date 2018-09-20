@@ -5,7 +5,6 @@ import java.util.Date;
 public class ImageMessage extends Message {
     private String photoUrl;
 
-
     public String getPhotoUrl() {
         return photoUrl;
     }

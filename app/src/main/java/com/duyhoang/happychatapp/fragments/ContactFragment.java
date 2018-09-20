@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
@@ -18,13 +19,14 @@ import com.duyhoang.happychatapp.activities.ChatChanelActivity;
 import com.duyhoang.happychatapp.adapters.ContactRecycleViewAdapter;
 import com.duyhoang.happychatapp.models.ChattingUser;
 
-public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.ContactListChangedListener,
+public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.ContactListListener,
         ContactRecycleViewAdapter.ContactRecycleViewAdapterCallback{
 
     private RecyclerView rvContactList;
     private ContactRecycleViewAdapter mChatRoomAdapter;
     private LinearLayoutManager mLinearLayoutManager;
     private Context mContext;
+    private TextView txtStatus;
 
 
     @Override
@@ -48,6 +50,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
         rvContactList = view.findViewById(R.id.recyclerView_contact_list);
+        txtStatus = view.findViewById(R.id.textView_contact_status);
         rvContactList.setAdapter(mChatRoomAdapter);
         rvContactList.setLayoutManager(mLinearLayoutManager);
         return view;
@@ -61,8 +64,20 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     }
 
     @Override
-    public void onChangeContactListSize(int position) {
+    public void onAddNewContactIntoContactList(int position) {
         mChatRoomAdapter.notifyItemInserted(position);
+    }
+
+    @Override
+    public void onHaveNoContact() {
+        txtStatus.setVisibility(View.VISIBLE);
+        rvContactList.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onExistContact() {
+        txtStatus.setVisibility(View.INVISIBLE);
+        rvContactList.setVisibility(View.VISIBLE);
     }
 
     @Override

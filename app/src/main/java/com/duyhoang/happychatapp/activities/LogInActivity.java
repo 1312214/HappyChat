@@ -3,7 +3,6 @@ package com.duyhoang.happychatapp.activities;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,7 +39,7 @@ import java.util.List;
 
 import static com.duyhoang.happychatapp.activities.RegisterActivity.RC_GOOGLE_LOGIN;
 
-public class LogInActivity extends AppCompatActivity implements View.OnClickListener {
+public class LogInActivity extends BaseActivity implements View.OnClickListener {
 
     public static String TAG = "LogInActivity";
 
@@ -87,6 +86,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
         if(requestCode == RC_GOOGLE_LOGIN) {
             if(resultCode == RESULT_OK) {
+                showBusyDialog(null, "Authenticating...");
                 handleWhenLoginSuccessfully();
             } else {
                 Log.e(TAG, "Google Login failed");
@@ -101,7 +101,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void initUI() {
-        if(getSupportActionBar() != null) getSupportActionBar().hide();
         getWindow().setBackgroundDrawableResource(R.drawable.casey_horner);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -123,6 +122,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                showBusyDialog(null, "Authenticating...");
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
@@ -143,29 +143,28 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-        private void handleFacebookAccessToken(AccessToken token) {
-            Log.d(TAG, "handleFacebookAccessToken:" + token);
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
 
-            AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-            mAuth.signInWithCredential(credential)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithCredential:success");
-                                handleWhenLoginSuccessfully();
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithCredential:failure", task.getException());
-                                Toast.makeText(getApplicationContext(), "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            handleWhenLoginSuccessfully();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
                         }
-                    });
-        }
 
+                    }
+                });
+    }
 
 
 
@@ -196,6 +195,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void attemptLogin(String email, String password) {
+        showBusyDialog(null, "Logging In");
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -224,6 +224,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void handleWhenLoginSuccessfully() {
+        dismissBusyDialog();
         FirebaseUser loginedUser = mAuth.getCurrentUser();
         if(loginedUser != null) {
             AppConfig.saveLocalUserAccount(loginedUser);
@@ -233,7 +234,6 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         }
-
     }
 
 

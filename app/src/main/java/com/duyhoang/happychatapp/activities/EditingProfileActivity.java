@@ -30,13 +30,14 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
         RealTimeDataBaseUtil.UpdatingCompletionProfileListener, StorageUtil.UploadingProfileImageListener{
 
 
-
     private ImageView imgAvatar;
     private AppCompatEditText etFullName, etAddress, etBio, etEmail, etMaritalStatus;
     private ChattingUser mSentUser;
 
     private Uri selectedImageUri;
     private String downloadImageUrl;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,6 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
         mSentUser = (ChattingUser) getIntent().getSerializableExtra("current_user");
         RealTimeDataBaseUtil.getInstance().setUpdatingCompletionListener(this);
         StorageUtil.getInstance().setUploadingProfileImageListener(this);
-
         initUI();
     }
 
@@ -54,6 +54,7 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
         getMenuInflater().inflate(R.menu.menu_edit_profile_options, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -89,6 +90,38 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
         if(requestCode == MY_PERMISSION_READ_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             pickImageInGallery();
         }
+    }
+
+
+    @Override
+    public void onPositiveButtonClicked() {
+        if(selectedImageUri != null) {
+            StorageUtil.getInstance().uploadProfileImageToStorage(selectedImageUri, this);
+
+        } else {
+            ChattingUser updatedUser = new ChattingUser(FirebaseAuth.getInstance().getUid(), etFullName.getText().toString(),
+                    etEmail.getText().toString(), mSentUser.getPhotoUrl(),  etBio.getText().toString(), etAddress.getText().toString(),
+                    etMaritalStatus.getText().toString());
+            RealTimeDataBaseUtil.getInstance().updateProfile(updatedUser);
+        }
+    }
+
+    @Override
+    public void onCompleteGettingDownloadUrl(String downloadUrl) {
+        downloadImageUrl = downloadUrl;
+        ChattingUser updatedUser = new ChattingUser(FirebaseAuth.getInstance().getUid(), etFullName.getText().toString(),
+                etEmail.getText().toString(), downloadImageUrl,  etBio.getText().toString(), etAddress.getText().toString(),
+                etMaritalStatus.getText().toString());
+        RealTimeDataBaseUtil.getInstance().updateProfile(updatedUser);
+    }
+
+    @Override
+    public void onCompleteUpdatingUser() {
+        Toast.makeText(this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        finish();
     }
 
     private void initUI() {
@@ -147,7 +180,6 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
     }
 
 
-
     private void resetAllEditTextInProfile() {
         etFullName.setText("");
         etBio.setText("");
@@ -157,41 +189,11 @@ public class EditingProfileActivity extends BaseActivity implements AlertDialogF
     }
 
     public void showAlertDialogForAskingSure() {
-        AlertDialogFragment dialogFragment = AlertDialogFragment.getInstance("Confirmation");
+        String message = "Want to save this profile editing?";
+        AlertDialogFragment dialogFragment = AlertDialogFragment.getInstance("Confirmation", message);
         dialogFragment.show(getSupportFragmentManager(), "alert_dialog_frag");
     }
 
 
-    @Override
-    public void onPositiveButtonClicked() {
-        if(selectedImageUri != null) {
-            StorageUtil.getInstance().uploadProfileImageToStorage(selectedImageUri, this);
 
-        } else {
-            ChattingUser updatedUser = new ChattingUser(FirebaseAuth.getInstance().getUid(), etFullName.getText().toString(),
-                    etEmail.getText().toString(), mSentUser.getPhotoUrl(),  etBio.getText().toString(), etAddress.getText().toString(),
-                    etMaritalStatus.getText().toString());
-            RealTimeDataBaseUtil.getInstance().updateProfile(updatedUser);
-        }
-
-
-    }
-
-    @Override
-    public void onCompleteGettingDownloadUrl(String downloadUrl) {
-        downloadImageUrl = downloadUrl;
-        ChattingUser updatedUser = new ChattingUser(FirebaseAuth.getInstance().getUid(), etFullName.getText().toString(),
-                etEmail.getText().toString(), downloadImageUrl,  etBio.getText().toString(), etAddress.getText().toString(),
-                etMaritalStatus.getText().toString());
-        RealTimeDataBaseUtil.getInstance().updateProfile(updatedUser);
-    }
-
-    @Override
-    public void onCompleteUpdatingUser() {
-        Toast.makeText(this, "Updated Successfully", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
-        finish();
-    }
 }

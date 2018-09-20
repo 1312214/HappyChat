@@ -24,19 +24,13 @@ public class StorageUtil {
 
     public static String TAG = "StorageUtil";
 
-
     private StorageReference mStorage;
-
-    private StorageReference mMessageImagesRef;
-    private StorageReference mProfileImagesRef;
+    private UploadingProfileImageListener mUploadingProfileImageListener;
 
     private static StorageUtil instance;
 
     private StorageUtil() {
         mStorage = FirebaseStorage.getInstance().getReference();
-        mMessageImagesRef = mStorage.child("message_images");
-        mProfileImagesRef = mStorage.child("profile_images");
-
     }
 
     public static StorageUtil getInstance() {
@@ -116,12 +110,6 @@ public class StorageUtil {
        isUploadingSucessful = false;
     }
 
-
-
-
-
-
-    private UploadingProfileImageListener mUploadingProfileImageListener;
 
     public void setUploadingProfileImageListener(UploadingProfileImageListener listener) {
         mUploadingProfileImageListener = listener;

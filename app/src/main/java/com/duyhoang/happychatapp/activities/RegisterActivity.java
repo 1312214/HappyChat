@@ -43,7 +43,7 @@ import com.jaeger.library.StatusBarUtil;
 import java.util.Arrays;
 import java.util.List;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegisterActivity extends BaseActivity implements View.OnClickListener {
 
 
     public static String TAG = "RegisterActivity";
@@ -86,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
         if(requestCode == RC_GOOGLE_LOGIN) {
             if(resultCode == RESULT_OK) {
+                showBusyDialog(null, "Authenticating...");
                 handleWhenLoginSuccessfully();
             } else {
                 Log.e(TAG, "Google Login failed");
@@ -184,8 +185,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
 
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+        showBusyDialog(null, "Authenticating...");
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -209,7 +211,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void registerEmailPassword() {
-
         String username = etUsername.getText().toString();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
@@ -237,6 +238,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void attemptRegister(final String username, final String email, final String password) {
+
+        showBusyDialog("Please wait...", "Registering");
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -271,6 +274,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void handleWhenLoginSuccessfully(String username) {
+        dismissBusyDialog();
         FirebaseUser loginedUser = FirebaseAuth.getInstance().getCurrentUser();
         if(loginedUser != null) {
             AppConfig.saveLocalUserAccount(loginedUser);
@@ -285,6 +289,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void handleWhenLoginSuccessfully() {
+        dismissBusyDialog();
         FirebaseUser loginedUser = FirebaseAuth.getInstance().getCurrentUser();
         if(loginedUser != null) {
             AppConfig.saveLocalUserAccount(loginedUser);

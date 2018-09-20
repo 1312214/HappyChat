@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.fragments.dialog.AlertDialogFragment;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.activities.LogInActivity;
@@ -23,7 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MoreFragment extends Fragment implements View.OnClickListener {
+public class MoreFragment extends Fragment implements View.OnClickListener, AlertDialogFragment.AlertDialogFragmentListener {
 
     private LinearLayout lnlProfile, lnlLogout, lnlAccountSetting, lnlFeedback, lnlTerms;
 
@@ -62,12 +64,18 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.linearLayout_myAccount_logout: logout();
+            case R.id.linearLayout_myAccount_logout: LogoutAskingForSure();
                 break;
             case R.id.linearLayout_myAccount_profile: openProfile();
                 break;
 
         }
+    }
+
+
+    @Override
+    public void onPositiveButtonClicked() {
+        logout();
     }
 
     private void initUI(View view) {
@@ -85,7 +93,7 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    private void logout() {
+    public void logout() {
         //Perform remove the current user from Chatting room.
         ChattingUser user;
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -110,5 +118,13 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
         startActivity(intent);
     }
 
+
+    public void LogoutAskingForSure() {
+        String msg = "Do you want to logout?";
+        FragmentManager fm = ((HomeActivity)mContext).getSupportFragmentManager();
+
+        AlertDialogFragment dialogFragment = AlertDialogFragment.getInstance(null, msg);
+        dialogFragment.show(fm, "logout_dialog");
+    }
 
 }

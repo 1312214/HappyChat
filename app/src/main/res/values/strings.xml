@@ -44,6 +44,7 @@
     <string name="bio">Bio</string>
     <string name="save">Save</string>
     <string name="done">Done</string>
+    <string name="you_have_no_contact">You have no contact</string>
 
 
 </resources>
