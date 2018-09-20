@@ -5,11 +5,11 @@
     android:layout_height="match_parent">
 
 
-    <!--<ImageView
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/background_login"
-        android:scaleType="centerCrop"/>-->
+        android:layout_height="match_parent"
+        android:src="@drawable/casey_horner"
+        android:scaleType="centerCrop"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -32,6 +32,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginBottom="40dp"
                 android:background="@drawable/white_rect">
 
                 <EditText

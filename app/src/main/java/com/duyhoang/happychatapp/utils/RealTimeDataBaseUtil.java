@@ -600,7 +600,8 @@ public class RealTimeDataBaseUtil {
 
     public void removeChildEventListenerForUserChanelId() {
         String currUid = FirebaseAuth.getInstance().getUid();
-        mRefUserChanel.child(currUid).removeEventListener(mChildEventListenerForUserChanelId);
+        if(mChildEventListenerForUserChanelId != null)
+            mRefUserChanel.child(currUid).removeEventListener(mChildEventListenerForUserChanelId);
     }
 
 

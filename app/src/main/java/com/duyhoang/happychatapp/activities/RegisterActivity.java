@@ -38,6 +38,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.jaeger.library.StatusBarUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -117,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        getWindow().setBackgroundDrawableResource(R.drawable.background_login);
+        getWindow().setBackgroundDrawableResource(R.drawable.daniel_von);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         etUsername = findViewById(R.id.edit_text_register_username);

@@ -33,6 +33,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.jaeger.library.StatusBarUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,19 +60,12 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        StatusBarUtil.setTranslucent(this, 10);
         mAuth = FirebaseAuth.getInstance();
         initUI();
 
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if(mAuth.getCurrentUser() != null) {
-//            startActivity(new Intent(this, HomeActivity.class));
-//            finish();
-//        }
-//    }
 
     @Override
     public void onClick(View view) {
@@ -108,7 +102,7 @@ public class LogInActivity extends AppCompatActivity implements View.OnClickList
 
     private void initUI() {
         if(getSupportActionBar() != null) getSupportActionBar().hide();
-        getWindow().setBackgroundDrawableResource(R.drawable.background_login);
+        getWindow().setBackgroundDrawableResource(R.drawable.casey_horner);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         etEmail =   findViewById(R.id.edit_text_login_email);
