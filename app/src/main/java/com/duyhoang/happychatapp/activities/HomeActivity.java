@@ -48,11 +48,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         super.onRestart();
         Fragment currFragment = mFragmentManager.findFragmentById(R.id.frameLayout_container);
         if(currFragment instanceof ChatRoomFragment) {
-            mFragmentManager.beginTransaction().remove(currFragment).commit();
-            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag").commit();
-        } else if(currFragment instanceof LatestMessageListFragment){
-            mFragmentManager.beginTransaction().remove(currFragment).commit();
-            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag").commit();
+            ((ChatRoomFragment)currFragment).refreshChatRoom();
         }
     }
 
@@ -134,14 +130,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     }
 
 
-    @Override
-    public void onRefreshChatRoom() {
-        Fragment frag = mFragmentManager.findFragmentByTag("chat_room_frag");
-        if(frag != null) {
-            mFragmentManager.beginTransaction().remove(frag).commit();
-            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag").commit();
-        }
-    }
 
     @Override
     public void onRestartLatestMsgFrag() {

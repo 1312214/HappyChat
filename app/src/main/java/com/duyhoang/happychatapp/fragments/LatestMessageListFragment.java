@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,10 +14,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.adapters.ChattyChanelListRecycleViewAdapter;
 
-public class LatestMessageListFragment extends Fragment implements RealTimeDataBaseUtil.ChattyChanelListListener, RealTimeDataBaseUtil.UserChanelNodeOnStoreListener{
+import java.util.ArrayList;
+
+public class LatestMessageListFragment extends Fragment implements RealTimeDataBaseUtil.ChattyChanelListListener, RealTimeDataBaseUtil.UserChanelNodeOnStoreListener,
+        RealTimeDataBaseUtil.InternetConnectionListener{
 
     private Context mContext;
     private RecyclerView rvChattyChanelList;
@@ -38,11 +43,11 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RealTimeDataBaseUtil.getInstance().mChattyChanelList = new ArrayList<>();
         RealTimeDataBaseUtil.getInstance().setUserChanelNodeInDatabaseListener(this);
         RealTimeDataBaseUtil.getInstance().setChattyChanelListListener(this);
-        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
+        RealTimeDataBaseUtil.getInstance().setmInternetConnectionListener(this);
         mChattyChanelListAdapter = new ChattyChanelListRecycleViewAdapter(mContext, RealTimeDataBaseUtil.getInstance().mChattyChanelList);
-
     }
 
     @Nullable
@@ -50,9 +55,9 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_lastest_messages, container, false);
         initUI(root);
-
         rvChattyChanelList.setAdapter(mChattyChanelListAdapter);
         rvChattyChanelList.setLayoutManager(new LinearLayoutManager(mContext));
+        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
         return root;
     }
 
@@ -91,6 +96,22 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     public void onAppearChildNode() {
         RealTimeDataBaseUtil.getInstance().removeChildValueEventListenerForUserChanelNode();
         if(mListener != null) mListener.onRestartLatestMsgFrag();
+    }
+
+
+    @Override
+    public void onHaveNoInternetConnection() {
+        Snackbar.make(((HomeActivity)mContext).findViewById(android.R.id.content), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
+                    }
+                }).show();
+        txtStatus.setText("You're offline");
+        txtStatus.setVisibility(View.VISIBLE);
+        rvChattyChanelList.setVisibility(View.INVISIBLE);
+
     }
 
     private void initUI(View root) {

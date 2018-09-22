@@ -46,7 +46,7 @@
                 android:textColor="@color/black"
                 android:layout_below="@id/textView_Profile_full_name"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="25dp"/>
+                android:paddingBottom="30dp"/>
             <ImageButton
                 android:id="@+id/imageButton_profile_edit_profile"
                 android:layout_width="wrap_content"
@@ -54,11 +54,15 @@
                 android:src="@drawable/ic_mode_edit_white_40dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/edit_profile_button"
                 android:background="@drawable/transparent_rect_clicked"/>
 
         </RelativeLayout>
+
         <Button
             android:id="@+id/button_profile_add_friend"
             android:layout_width="150dp"
@@ -68,13 +72,16 @@
             android:textColor="@color/white"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"/>
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp">
+            android:layout_marginLeft="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,7 +111,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp">
+            android:layout_marginLeft="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -134,7 +143,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp">
+            android:layout_marginLeft="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

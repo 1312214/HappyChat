@@ -19,7 +19,9 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_account_circle_grey_24dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="@string/icon_profile"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -27,6 +29,9 @@
                 android:text="@string/my_profile"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingStart="20dp"
+                android:paddingLeft="20dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
@@ -40,7 +45,9 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_settings_grey_24dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="@string/icon_account_setting"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -48,6 +55,9 @@
                 android:text="@string/account_setting"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingStart="20dp"
+                android:paddingLeft="20dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
@@ -61,7 +71,9 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_logout_grey_24dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="@string/icon_log_out"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -69,6 +81,9 @@
                 android:text="@string/log_out"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingStart="20dp"
+                android:paddingLeft="20dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
@@ -90,7 +105,9 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_info_outline_grey_24dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="@string/icon_version"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -98,6 +115,9 @@
                 android:text="@string/version_1_0"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingStart="20dp"
+                android:paddingLeft="20dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
@@ -111,7 +131,9 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_flag_grey_24dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="@string/icon_feedback"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -119,6 +141,9 @@
                 android:text="@string/feedback"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingStart="20dp"
+                android:paddingLeft="20dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
@@ -132,7 +157,9 @@
                 android:layout_height="30dp"
                 android:src="@drawable/ic_term_grey_24dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="30dp"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:contentDescription="@string/icon_terms"/>
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -140,6 +167,9 @@
                 android:text="@string/term_of_service"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:paddingStart="20dp"
+                android:paddingLeft="20dp"
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"/>
         </LinearLayout>
 

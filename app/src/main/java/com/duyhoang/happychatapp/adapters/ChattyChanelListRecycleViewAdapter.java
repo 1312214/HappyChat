@@ -106,7 +106,10 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
             }
         } else {
             if(latestMsg.getSenderId().equals(guestId)) {
-                rs = guestName.substring(0, guestName.indexOf(" ")) + " sent a photo";
+                if(guestName.contains(" "))
+                    rs = guestName.substring(0, guestName.indexOf(" ")) + " sent a photo";
+                else
+                    rs = guestName + " sent a photo";
             } else {
                 rs = "You: sent a photo";
             }

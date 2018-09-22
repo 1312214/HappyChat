@@ -43,4 +43,9 @@ public class AppConfig extends Application {
         else editor.putString(PREF_PHOTO_URL, null);
         editor.commit();
     }
+
+    public static Context getAppContext() {
+        return context;
+    }
+
 }

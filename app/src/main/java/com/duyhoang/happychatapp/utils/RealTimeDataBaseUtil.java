@@ -1,9 +1,14 @@
 package com.duyhoang.happychatapp.utils;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.duyhoang.happychatapp.AppConfig;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.duyhoang.happychatapp.models.ChattyChanel;
 import com.duyhoang.happychatapp.models.message.ImageMessage;
@@ -55,11 +60,13 @@ public class RealTimeDataBaseUtil {
     private UpdatingCompletionProfileListener mUpdatingCompletionProfileListener;
     private DownloadCurrentUserInfoListener mDownloadCurrentUserInfoListener;
     private CheckingContactExistenceListener mCheckingContactExistenceListener;
+    private InternetConnectionListener mInternetConnectionListener;
 
     // Temp variables
     private String currChanelMessageId;
 
-
+    private Handler mHandler;
+    private Context mContext;
 
     private ChattyChanelDownloadTask mChattyChanelDownloadTask;
 
@@ -67,6 +74,8 @@ public class RealTimeDataBaseUtil {
     private static RealTimeDataBaseUtil realTimeDataBaseUtil;
 
     private RealTimeDataBaseUtil() {
+        mContext = AppConfig.getAppContext();
+        mHandler = new Handler(Looper.getMainLooper());
         mRefUsers = FirebaseDatabase.getInstance().getReference("users");
         mRefChatRoom = FirebaseDatabase.getInstance().getReference("chat_room");
         mRefContacts = FirebaseDatabase.getInstance().getReference("contacts");
@@ -74,10 +83,11 @@ public class RealTimeDataBaseUtil {
         mRefUserChanel = FirebaseDatabase.getInstance().getReference("user_chanel");
         mRefChanelMessage = FirebaseDatabase.getInstance().getReference("chanel_message");
         mRefMessages = FirebaseDatabase.getInstance().getReference("messages");
+
     }
 
     public static RealTimeDataBaseUtil getInstance() {
-        if(realTimeDataBaseUtil == null) {
+        if (realTimeDataBaseUtil == null) {
             realTimeDataBaseUtil = new RealTimeDataBaseUtil();
         }
         return realTimeDataBaseUtil;
@@ -89,12 +99,14 @@ public class RealTimeDataBaseUtil {
         mRefUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(user.getUid())) {
+                if (!dataSnapshot.hasChild(user.getUid())) {
                     mRefUsers.child(user.getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()) Log.i(TAG, "User- " + user.getName() + " was written into database");
-                            else Log.e(TAG, "Error: User-" + user.getName() + "failed to be written into database" );
+                            if (task.isSuccessful())
+                                Log.i(TAG, "User- " + user.getName() + " was written into database");
+                            else
+                                Log.e(TAG, "Error: User-" + user.getName() + "failed to be written into database");
                         }
                     });
 
@@ -116,7 +128,7 @@ public class RealTimeDataBaseUtil {
         mRefChatRoom.child("members").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(user.getUid()))
+                if (!dataSnapshot.hasChild(user.getUid()))
                     mRefChatRoom.child("members").child(user.getUid()).setValue(true);
             }
 
@@ -129,17 +141,18 @@ public class RealTimeDataBaseUtil {
 
 
     public void removeUserFromChatRoom(ChattingUser user) {
+
         mRefChatRoom.child("members").child(user.getUid()).removeValue();
     }
 
 
     public void downloadChattingUserVisibleListFromRoomChatTable() {
-        mChatRoomUserList = null;
-        mChatRoomUserList = new ArrayList<ChattingUser>();
-
-        mRefChatRoom.child("members").addChildEventListener(mMemberNodeChildEventListener);
-
-
+        if (ConnectionUtil.isAppOnline(mContext)) {
+            mRefChatRoom.child("members").addChildEventListener(mMemberNodeChildEventListener);
+        } else {
+            if (mInternetConnectionListener != null)
+                mInternetConnectionListener.onHaveNoInternetConnection();
+        }
     }
 
 
@@ -181,13 +194,14 @@ public class RealTimeDataBaseUtil {
 
         mRefUsers.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             ChattingUser tempUser;
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 tempUser = dataSnapshot.getValue(ChattingUser.class);
                 mChatRoomUserList.add(tempUser);
 
                 // perform notifying to ChatRoomRecycleViewAdapter: notifyItemInserted here.
-                if(mChatRoomUserQuantityChangedListener != null)
+                if (mChatRoomUserQuantityChangedListener != null)
                     mChatRoomUserQuantityChangedListener.onNewChatUserInsertedAtPosition(mChatRoomUserList.size() - 1);
             }
 
@@ -207,21 +221,21 @@ public class RealTimeDataBaseUtil {
 
     public void addNewFriendToContact(final String friendID) {
         final String currUID = FirebaseAuth.getInstance().getUid();
-        if(currUID != null)
+        if (currUID != null)
             mRefContacts.child(currUID).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(!dataSnapshot.hasChild(friendID)) {
+                    if (!dataSnapshot.hasChild(friendID)) {
                         mRefContacts.child(currUID).child(friendID).setValue(true).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(mMakingToastListener != null)
+                                if (mMakingToastListener != null)
                                     mMakingToastListener.onToast("Added to Contact");
                             }
                         });
 
                     } else {
-                        if(mMakingToastListener != null)
+                        if (mMakingToastListener != null)
                             mMakingToastListener.onToast("This User already added");
                     }
                 }
@@ -241,31 +255,37 @@ public class RealTimeDataBaseUtil {
 
 
     public void downloadContactListFromContactTable() {
-        mContactList = null;
-        mContactList = new ArrayList<>();
-        String uid = FirebaseAuth.getInstance().getUid();
-        if(uid != null) {
-            mRefContacts.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChildren()) {
-                        if(mContactListListener != null) mContactListListener.onExistContact();
-                        for(DataSnapshot dss : dataSnapshot.getChildren()) {
-                            getnsaveChattingUserFromUsersTableIntoContactList(dss.getKey());
+
+        if (ConnectionUtil.isAppOnline(mContext)) {
+            String uid = FirebaseAuth.getInstance().getUid();
+            if (uid != null) {
+                mRefContacts.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChildren()) {
+                            if (mContactListListener != null) mContactListListener.onExistContact();
+                            for (DataSnapshot dss : dataSnapshot.getChildren()) {
+                                getnsaveChattingUserFromUsersTableIntoContactList(dss.getKey());
+                            }
+
+                        } else {
+                            if (mContactListListener != null)
+                                mContactListListener.onHaveNoContact();
                         }
-
-                    } else {
-                        if(mContactListListener != null)
-                            mContactListListener.onHaveNoContact();
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
+
+        } else {
+            if (mInternetConnectionListener != null)
+                mInternetConnectionListener.onHaveNoInternetConnection();
         }
+
 
     }
 
@@ -276,8 +296,8 @@ public class RealTimeDataBaseUtil {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ChattingUser user = dataSnapshot.getValue(ChattingUser.class);
                 mContactList.add(user);
-                if(mContactListListener != null) {
-                    mContactListListener.onAddNewContactIntoContactList(mContactList.size() -1);
+                if (mContactListListener != null) {
+                    mContactListListener.onAddNewContactIntoContactList(mContactList.size() - 1);
                 }
 
             }
@@ -298,11 +318,11 @@ public class RealTimeDataBaseUtil {
     public void redownloadMessageChanelWithSelectedContact(final String selectedUserId) {
 
         String currUid = FirebaseAuth.getInstance().getUid();
-        if(currUid != null)
+        if (currUid != null)
             mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChild(selectedUserId)) {
+                    if (dataSnapshot.hasChild(selectedUserId)) {
                         attemptLoadingMessageByChanelId(dataSnapshot.child(selectedUserId).getValue().toString());
                     }
                 }
@@ -317,24 +337,21 @@ public class RealTimeDataBaseUtil {
 
     public void downloadMessageChanelWithSelectedContact(final String selectedUserId) {
 
-        mChattyChanelMessageList = null;
-        mChattyChanelMessageList = new ArrayList<>();
-
         String currUid = FirebaseAuth.getInstance().getUid();
-        if(currUid != null)
-        mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(selectedUserId)) {
-                    attemptLoadingMessageByChanelId(dataSnapshot.child(selectedUserId).getValue().toString());
+        if (currUid != null)
+            mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild(selectedUserId)) {
+                        attemptLoadingMessageByChanelId(dataSnapshot.child(selectedUserId).getValue().toString());
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
     }
 
 
@@ -365,8 +382,8 @@ public class RealTimeDataBaseUtil {
 
 
     public void removeChildEventListenerOnCurrentChanelMessageId() {
-        if(currChanelMessageId != null)
-        mRefChanelMessage.child(currChanelMessageId).removeEventListener(childEventListenerAtCurrentChanelMessageId);
+        if (currChanelMessageId != null)
+            mRefChanelMessage.child(currChanelMessageId).removeEventListener(childEventListenerAtCurrentChanelMessageId);
     }
 
 
@@ -403,9 +420,9 @@ public class RealTimeDataBaseUtil {
         mRefChanels.child(chanelId).child("chanel_message_id").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     currChanelMessageId = dataSnapshot.getValue().toString();
-                    if(currChanelMessageId != null)
+                    if (currChanelMessageId != null)
                         mRefChanelMessage.child(currChanelMessageId).addChildEventListener(childEventListenerAtCurrentChanelMessageId);
                 }
             }
@@ -417,7 +434,6 @@ public class RealTimeDataBaseUtil {
         });
 
 
-
     }
 
 
@@ -426,21 +442,23 @@ public class RealTimeDataBaseUtil {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Message tempMsg;
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     String v = null;
                     try {
                         v = dataSnapshot.child("type").getValue().toString();
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
-                    if(v.equals("TEXT")) {
+                    if (v.equals("TEXT")) {
                         tempMsg = dataSnapshot.getValue(TextMessage.class);
                         mChattyChanelMessageList.add(tempMsg);
-                        if(mChattyChanelMessageListListener != null) mChattyChanelMessageListListener.onNewMessageInserted(mChattyChanelMessageList.size() - 1);
+                        if (mChattyChanelMessageListListener != null)
+                            mChattyChanelMessageListListener.onNewMessageInserted(mChattyChanelMessageList.size() - 1);
                     } else {
                         tempMsg = dataSnapshot.getValue(ImageMessage.class);
                         mChattyChanelMessageList.add(tempMsg);
-                        if(mChattyChanelMessageListListener != null) mChattyChanelMessageListListener.onNewMessageInserted(mChattyChanelMessageList.size() - 1);
+                        if (mChattyChanelMessageListListener != null)
+                            mChattyChanelMessageListListener.onNewMessageInserted(mChattyChanelMessageList.size() - 1);
                     }
                 }
             }
@@ -462,30 +480,30 @@ public class RealTimeDataBaseUtil {
         // upload new message to the messages table
         // mark id of new message into the chanel_message talble.
         String currUid = FirebaseAuth.getInstance().getUid();
-        if(currUid != null)
-        mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String messageId = mRefMessages.push().getKey();
-                message.setMsgId(messageId);
-                if(dataSnapshot.hasChild(receiverUserId)) {
-                    String chanelId = dataSnapshot.child(receiverUserId).getValue().toString();
-                    getnsaveChanelMessageIdByChanelIdThenSaveMessageIdIntoChanelMsgTable(chanelId, messageId);
-                    message.setChanelId(chanelId);
-                    mRefMessages.child(messageId).setValue(message);
-                    mRefChanels.child(chanelId).child("latest_message").setValue(messageId);
-                } else {
-                    createNewChanelAndSaveCurrentMessage(FirebaseAuth.getInstance().getUid(), receiverUserId, message);
+        if (currUid != null)
+            mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String messageId = mRefMessages.push().getKey();
+                    message.setMsgId(messageId);
+                    if (dataSnapshot.hasChild(receiverUserId)) {
+                        String chanelId = dataSnapshot.child(receiverUserId).getValue().toString();
+                        getnsaveChanelMessageIdByChanelIdThenSaveMessageIdIntoChanelMsgTable(chanelId, messageId);
+                        message.setChanelId(chanelId);
+                        mRefMessages.child(messageId).setValue(message);
+                        mRefChanels.child(chanelId).child("latest_message").setValue(messageId);
+                    } else {
+                        createNewChanelAndSaveCurrentMessage(FirebaseAuth.getInstance().getUid(), receiverUserId, message);
+                    }
+
+
                 }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
     }
 
 
@@ -493,7 +511,7 @@ public class RealTimeDataBaseUtil {
         mRefChanels.child(chanelId).child("chanel_message_id").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     String chanelMessgeId = dataSnapshot.getValue().toString();
                     mRefChanelMessage.child(chanelMessgeId).child(messageId).setValue(true);
                 }
@@ -508,32 +526,39 @@ public class RealTimeDataBaseUtil {
     }
 
 
-
     public void downloadChattyChanel() {
-        mChattyChanelList = new ArrayList<>();
 
-        String currUid = FirebaseAuth.getInstance().getUid();
-        if(currUid != null) {
-            mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()) {
-                        if(mChattyChanelListListener != null) mChattyChanelListListener.onHaveChattyChanel();
-                        mRefUserChanel.child(FirebaseAuth.getInstance().getUid()).addChildEventListener(mChildEventListenerForUserChanelId);
-                    } else {
-                        if(mChattyChanelListListener != null) mChattyChanelListListener.onHaveNoChattyChanel("You have no message");
-                        mRefUserChanel.child("xxxxxxxxsxxxss").child("00xx00").setValue("00ss00");
-                        mRefUserChanel.addChildEventListener(mChildValueEventListenerForUserChanelNode);
+        if (ConnectionUtil.isAppOnline(mContext)) {
+            String currUid = FirebaseAuth.getInstance().getUid();
+            if (currUid != null) {
+                mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (mChattyChanelListListener != null)
+                                mChattyChanelListListener.onHaveChattyChanel();
+                            mRefUserChanel.child(FirebaseAuth.getInstance().getUid()).addChildEventListener(mChildEventListenerForUserChanelId);
+                        } else {
+                            if (mChattyChanelListListener != null)
+                                mChattyChanelListListener.onHaveNoChattyChanel("You have no message");
+                            mRefUserChanel.child("xxxxxxxxsxxxss").child("00xx00").setValue("00ss00");
+                            mRefUserChanel.addChildEventListener(mChildValueEventListenerForUserChanelNode);
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
 
+            }
+
+        } else {
+            if (mInternetConnectionListener != null)
+                mInternetConnectionListener.onHaveNoInternetConnection();
         }
+
     }
 
 
@@ -541,10 +566,16 @@ public class RealTimeDataBaseUtil {
     private ChildEventListener mChildValueEventListenerForUserChanelNode = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            if(!dataSnapshot.getKey().equals("xxxxxxxxsxxxss") && !justOnceFlag) {
+            if (!dataSnapshot.getKey().equals("xxxxxxxxsxxxss") && !justOnceFlag) {
                 justOnceFlag = true;
-                if(mUserChanelNodeInDatabaseListener != null)
-                    mUserChanelNodeInDatabaseListener.onAppearChildNode();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mUserChanelNodeInDatabaseListener != null)
+                            mUserChanelNodeInDatabaseListener.onAppearChildNode();
+                    }
+                });
+
             }
 
         }
@@ -607,7 +638,7 @@ public class RealTimeDataBaseUtil {
 
     public void removeChildEventListenerForUserChanelId() {
         String currUid = FirebaseAuth.getInstance().getUid();
-        if(mChildEventListenerForUserChanelId != null)
+        if (mChildEventListenerForUserChanelId != null)
             mRefUserChanel.child(currUid).removeEventListener(mChildEventListenerForUserChanelId);
     }
 
@@ -617,9 +648,9 @@ public class RealTimeDataBaseUtil {
         mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChildren()) {
-                    if(mChattyChanelDownloadTask != null) {
-                        for(DataSnapshot dss : dataSnapshot.getChildren()) {
+                if (dataSnapshot.hasChildren()) {
+                    if (mChattyChanelDownloadTask != null) {
+                        for (DataSnapshot dss : dataSnapshot.getChildren()) {
                             String removedChanelId = dss.getValue().toString();
                             mRefChanels.child(removedChanelId).child("latest_message").removeEventListener(mChattyChanelDownloadTask.getLatestMessageListener());
                         }
@@ -644,9 +675,9 @@ public class RealTimeDataBaseUtil {
         mRefUsers.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     ChattingUser currUser = dataSnapshot.getValue(ChattingUser.class);
-                    if(mDownloadCurrentUserInfoListener != null)
+                    if (mDownloadCurrentUserInfoListener != null)
                         mDownloadCurrentUserInfoListener.onFinishDownloadingCurrentUser(currUser);
                 }
             }
@@ -660,12 +691,12 @@ public class RealTimeDataBaseUtil {
 
 
     public void downloadContactUserIdList() {
-        mContactIdList = new ArrayList<>();
+
         mRefContacts.child(FirebaseAuth.getInstance().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChildren()) {
-                    for(DataSnapshot dss : dataSnapshot.getChildren()) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot dss : dataSnapshot.getChildren()) {
                         mContactIdList.add(dss.getKey());
                     }
                 }
@@ -684,8 +715,8 @@ public class RealTimeDataBaseUtil {
         mRefContacts.child(FirebaseAuth.getInstance().getUid()).child(selectedContactId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    if(mCheckingContactExistenceListener != null)
+                if (dataSnapshot.exists()) {
+                    if (mCheckingContactExistenceListener != null)
                         mCheckingContactExistenceListener.onCompleteCheckingContactExistence(true);
                 }
 
@@ -703,11 +734,11 @@ public class RealTimeDataBaseUtil {
         mRefUsers.child(updatedUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     mRefUsers.child(updatedUser.getUid()).setValue(updatedUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(mUpdatingCompletionProfileListener != null)
+                            if (mUpdatingCompletionProfileListener != null)
                                 mUpdatingCompletionProfileListener.onCompleteUpdatingUser();
                         }
                     });
@@ -722,7 +753,7 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void setCheckingContactExistenceListener(CheckingContactExistenceListener listener){
+    public void setCheckingContactExistenceListener(CheckingContactExistenceListener listener) {
         mCheckingContactExistenceListener = listener;
     }
 
@@ -732,13 +763,12 @@ public class RealTimeDataBaseUtil {
     }
 
 
-
     public void setDownloadCurrentUserInfoListener(DownloadCurrentUserInfoListener listener) {
         mDownloadCurrentUserInfoListener = listener;
     }
 
 
-    public void markAsReadForMessage(String messageId){
+    public void markAsReadForMessage(String messageId) {
         mRefMessages.child(messageId).child("isRead").setValue(true);
     }
 
@@ -750,7 +780,7 @@ public class RealTimeDataBaseUtil {
         private ValueEventListener latestMessageListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
                     attemptLoadingLatestMessageById(dataSnapshot.getValue().toString());
                 }
 
@@ -763,16 +793,15 @@ public class RealTimeDataBaseUtil {
         };
 
 
-
         public ValueEventListener getLatestMessageListener() {
             return latestMessageListener;
         }
 
-        public ChattyChanelDownloadTask(DataSnapshot dataSnapshot){
+        public ChattyChanelDownloadTask(DataSnapshot dataSnapshot) {
             this.dataSnapshot = dataSnapshot;
         }
 
-        public void performDownloading(){
+        public void performDownloading() {
             new Thread(this).start();
         }
 
@@ -789,7 +818,7 @@ public class RealTimeDataBaseUtil {
             mRefUsers.child(guestId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()) {
+                    if (dataSnapshot.exists()) {
                         ChattingUser user = dataSnapshot.getValue(ChattingUser.class);
                         tempChattyChanel.setGuestUser(user);
                     }
@@ -813,16 +842,16 @@ public class RealTimeDataBaseUtil {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Message tempMsg;
-                    if(dataSnapshot.exists()) {
+                    if (dataSnapshot.exists()) {
                         String v = null;
                         try {
                             v = dataSnapshot.child("type").getValue().toString();
                         } catch (NullPointerException e) {
                             e.printStackTrace();
                         }
-                        if(v.equals("TEXT")) {
+                        if (v.equals("TEXT")) {
                             tempMsg = dataSnapshot.getValue(TextMessage.class);
-                            if(tempChattyChanel == null) {
+                            if (tempChattyChanel == null) {
                                 // in case, just latest_message is changed
                                 updateLatestMessageChangedForChattyChanelListByChanelId(tempMsg);
                             } else {
@@ -833,7 +862,7 @@ public class RealTimeDataBaseUtil {
 
                         } else {
                             tempMsg = dataSnapshot.getValue(ImageMessage.class);
-                            if(tempChattyChanel == null) {
+                            if (tempChattyChanel == null) {
                                 // in case, just latest_message is changed
                                 updateLatestMessageChangedForChattyChanelListByChanelId(tempMsg);
                             } else {
@@ -854,11 +883,10 @@ public class RealTimeDataBaseUtil {
         }
 
 
-
         private void updateLatestMessageChangedForChattyChanelListByChanelId(Message msg) {
 
-            for(int i = 0; i < mChattyChanelList.size(); i++) {
-                if(mChattyChanelList.get(i).getChanelId().equals(msg.getChanelId())) {
+            for (int i = 0; i < mChattyChanelList.size(); i++) {
+                if (mChattyChanelList.get(i).getChanelId().equals(msg.getChanelId())) {
                     mChattyChanelList.get(i).setLastestMessage(msg);
                     sortChattyChanelListInDescendingOrderByLatestMessageDate();
                     break;
@@ -877,7 +905,6 @@ public class RealTimeDataBaseUtil {
         }
 
 
-
         private synchronized void sortChattyChanelListInDescendingOrderByLatestMessageDate() {
             // Sorting ChattyChanelList in descending order of date
             Collections.sort(mChattyChanelList, new Comparator<ChattyChanel>() {
@@ -889,15 +916,24 @@ public class RealTimeDataBaseUtil {
                 }
             });
 
-            if(mChattyChanelListListener != null) mChattyChanelListListener.onChattyChanelListChanged();
+            if (mChattyChanelListListener != null)
+                mChattyChanelListListener.onChattyChanelListChanged();
         }
 
     }
 
 
+    public void setmInternetConnectionListener(InternetConnectionListener listener) {
+        mInternetConnectionListener = listener;
+    }
 
     public void setUserChanelNodeInDatabaseListener(UserChanelNodeOnStoreListener listener) {
         mUserChanelNodeInDatabaseListener = listener;
+    }
+
+
+    public interface InternetConnectionListener {
+        void onHaveNoInternetConnection();
     }
 
     public interface CheckingContactExistenceListener {
@@ -922,7 +958,9 @@ public class RealTimeDataBaseUtil {
 
     public interface ContactListListener {
         void onAddNewContactIntoContactList(int position);
+
         void onHaveNoContact();
+
         void onExistContact();
     }
 
@@ -936,7 +974,9 @@ public class RealTimeDataBaseUtil {
 
     public interface ChattyChanelListListener {
         void onChattyChanelListChanged();
+
         void onHaveNoChattyChanel(String message);
+
         void onHaveChattyChanel();
     }
 

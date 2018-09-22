@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.duyhoang.happychatapp.AppConfig;
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.utils.ConnectionUtil;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.utils.ValidationUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
@@ -63,16 +65,31 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
         mAuth = FirebaseAuth.getInstance();
         initUI();
 
+        if(!ConnectionUtil.isAppOnline(this)) {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.button_login_login: loginWithEmailAndPassword();
+            case R.id.button_login_login:
+                if(ConnectionUtil.isAppOnline(this)) {
+                    loginWithEmailAndPassword();
+                } else {
+                    Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
-            case R.id.button_login_google_login: loginWithGoogleSignin();
+
+            case R.id.button_login_google_login:
+                if(ConnectionUtil.isAppOnline(this)) {
+                    loginWithGoogleSignin();
+                } else {
+                    Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
+
             case R.id.text_view_login_register: openRegisterScreen();
                 break;
         }
@@ -114,8 +131,8 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
         btnLogin.setOnClickListener(this);
         btnGoogleLogin.setOnClickListener(this);
         txtRegisterNow.setOnClickListener(this);
+        btnFacebookLogin.setOnClickListener(this);
 
-        // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         btnFacebookLogin.setReadPermissions("email", "public_profile");
         btnFacebookLogin.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -134,12 +151,12 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-                Toast.makeText(LogInActivity.this, "facebook:onError: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "facebook:onError", error);
+                if(!ConnectionUtil.isAppOnline(LogInActivity.this)) {
+                    Toast.makeText(LogInActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
-
-
 
     }
 

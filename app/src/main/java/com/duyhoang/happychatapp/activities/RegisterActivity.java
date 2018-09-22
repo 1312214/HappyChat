@@ -2,6 +2,7 @@ package com.duyhoang.happychatapp.activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.duyhoang.happychatapp.AppConfig;
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.utils.ConnectionUtil;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.utils.ValidationUtil;
 import com.duyhoang.happychatapp.models.ChattingUser;
@@ -59,7 +61,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private LoginButton btnFacebookLogin;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,9 +73,20 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.button_register_register: registerEmailPassword();
+            case R.id.button_register_register:
+                if(ConnectionUtil.isAppOnline(this)) {
+                    registerEmailPassword();
+                } else {
+                    Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
-            case R.id.button_register_google_login: loginWithGoogleSignin();
+
+            case R.id.button_register_google_login:
+                if(ConnectionUtil.isAppOnline(this)) {
+                    loginWithGoogleSignin();
+                } else {
+                    Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -84,8 +96,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == RC_GOOGLE_LOGIN) {
-            if(resultCode == RESULT_OK) {
+        if (requestCode == RC_GOOGLE_LOGIN) {
+            if (resultCode == RESULT_OK) {
                 showBusyDialog(null, "Authenticating...");
                 handleWhenLoginSuccessfully();
             } else {
@@ -102,7 +114,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
             return true;
         }
@@ -110,10 +122,9 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-
     private void initUI() {
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.show();
             actionBar.setTitle("Registration");
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -123,13 +134,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         etUsername = findViewById(R.id.edit_text_register_username);
-        etEmail =  findViewById(R.id.edit_text_register_email);
-        etPassword =  findViewById(R.id.edit_text_register_password);
-        etRetypePassword =  findViewById(R.id.edit_text_register_confir_password);
-        btnRegister =  findViewById(R.id.button_register_register);
-        btnFacebookLogin =   findViewById(R.id.button_register_facebook_login);
-        btnGoogleLogin =  findViewById(R.id.button_register_google_login);
-        cbAgreedTerms =  findViewById(R.id.check_box_register_terms);
+        etEmail = findViewById(R.id.edit_text_register_email);
+        etPassword = findViewById(R.id.edit_text_register_password);
+        etRetypePassword = findViewById(R.id.edit_text_register_confir_password);
+        btnRegister = findViewById(R.id.button_register_register);
+        btnFacebookLogin = findViewById(R.id.button_register_facebook_login);
+        btnGoogleLogin = findViewById(R.id.button_register_google_login);
+        cbAgreedTerms = findViewById(R.id.check_box_register_terms);
 
         btnRegister.setOnClickListener(this);
         btnGoogleLogin.setOnClickListener(this);
@@ -147,8 +158,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if(etPassword.length() > 0 && etRetypePassword.length() > 0) {
-                    if(!etRetypePassword.getText().toString().equals(etPassword.getText().toString())){
+                if (etPassword.length() > 0 && etRetypePassword.length() > 0) {
+                    if (!etRetypePassword.getText().toString().equals(etPassword.getText().toString())) {
                         etRetypePassword.setError("Do not match");
                     }
                 }
@@ -176,8 +187,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
             @Override
             public void onError(FacebookException error) {
-                Log.d(TAG, "facebook:onError", error);
-                Toast.makeText(RegisterActivity.this, "facebook:onError: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "facebook:onError", error);
+                if (!ConnectionUtil.isAppOnline(RegisterActivity.this)) {
+                    Toast.makeText(RegisterActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -209,16 +222,15 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-
     private void registerEmailPassword() {
         String username = etUsername.getText().toString();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
 
-        if(cbAgreedTerms.isChecked()) {
-            if(ValidationUtil.isUsernameValid(username) == null) {
-                if(ValidationUtil.isEmailValid(email) == null) {
-                    if(ValidationUtil.isPasswordValid(password) == null) {
+        if (cbAgreedTerms.isChecked()) {
+            if (ValidationUtil.isUsernameValid(username) == null) {
+                if (ValidationUtil.isEmailValid(email) == null) {
+                    if (ValidationUtil.isPasswordValid(password) == null) {
                         attemptRegister(username, email, password);
                     } else {
                         etPassword.setError(ValidationUtil.isPasswordValid(password));
@@ -243,11 +255,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     Log.d(TAG, "createUserWithEmail:success, then having been signed in");
                     Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
                     handleWhenLoginSuccessfully(username);
-                } else if(task.getException() != null){
+                } else if (task.getException() != null) {
                     Log.e(TAG, "createUserWithEmail:failed");
                     task.getException().printStackTrace();
                     Toast.makeText(RegisterActivity.this, "Authentication failed by: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -257,9 +269,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         });
 
     }
-
-
-
 
 
     private void loginWithGoogleSignin() {
@@ -272,11 +281,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-
     private void handleWhenLoginSuccessfully(String username) {
         dismissBusyDialog();
         FirebaseUser loginedUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(loginedUser != null) {
+        if (loginedUser != null) {
             AppConfig.saveLocalUserAccount(loginedUser);
             ChattingUser user = ChattingUser.valueOf(loginedUser);
             user.setName(username);
@@ -291,7 +299,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private void handleWhenLoginSuccessfully() {
         dismissBusyDialog();
         FirebaseUser loginedUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(loginedUser != null) {
+        if (loginedUser != null) {
             AppConfig.saveLocalUserAccount(loginedUser);
             ChattingUser user = ChattingUser.valueOf(loginedUser);
             RealTimeDataBaseUtil.getInstance().addUserToChatRoom(user);
@@ -303,6 +311,4 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-
-    
 }

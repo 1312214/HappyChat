@@ -45,7 +45,7 @@ public class BaseActivity extends AppCompatActivity implements ActivityCompat.On
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle(title);
         mProgressDialog.setMessage(message);
-        mProgressDialog.setCancelable(false);
+//        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
     }
 

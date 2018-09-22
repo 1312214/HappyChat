@@ -29,6 +29,7 @@ import com.duyhoang.happychatapp.models.message.TextMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ChatChanelActivity extends BaseActivity implements View.OnClickListener,
@@ -53,6 +54,7 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.activity_chat_chanel);
         mGuest = (ChattingUser) getIntent().getSerializableExtra("selected_contact");
         initUI();
+        RealTimeDataBaseUtil.getInstance().mChattyChanelMessageList = new ArrayList<>();
         RealTimeDataBaseUtil.getInstance().setChattyChanelMessageListListener(this);
         RealTimeDataBaseUtil.getInstance().setDownloadCurrentUserInfoListener(this);
         StorageUtil.getInstance().setUploadingProfileImageListener(this);
@@ -67,7 +69,21 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
         mChatChanelAdapter.setSeeingPhotoListener(this);
     }
 
+    @Override
+    protected void onStop() {
+        if(!isChoosingImage) {
+            RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();
+        }
+        super.onStop();
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        RealTimeDataBaseUtil.getInstance().mChattyChanelMessageList = null;
+        super.onDestroy();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -108,15 +124,6 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     }
 
 
-
-    @Override
-    protected void onStop() {
-        if(!isChoosingImage) {
-            RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();
-        }
-        super.onStop();
-
-    }
 
 
     @Override

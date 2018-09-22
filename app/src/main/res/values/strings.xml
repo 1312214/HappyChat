@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HappyChatApp</string>
+    <string name="app_name">HappyChat</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
@@ -45,6 +45,17 @@
     <string name="save">Save</string>
     <string name="done">Done</string>
     <string name="you_have_no_contact">You have no contact</string>
+    <string name="upload_image">upload image</string>
+    <string name="send_msg">send message</string>
+    <string name="app_logo">app logo</string>
+    <string name="edit_profile_button">edit profile button</string>
+    <string name="icon_profile">icon profile</string>
+    <string name="icon_account_setting">icon account setting</string>
+    <string name="icon_log_out">icon log out</string>
+    <string name="icon_version">icon version</string>
+    <string name="icon_feedback">icon feedback</string>
+    <string name="icon_terms">icon terms</string>
+    <string name="image_message">image message</string>
 
 
 </resources>

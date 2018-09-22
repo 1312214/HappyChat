@@ -16,6 +16,7 @@
             app:civ_border_color="@color/white"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="3dp"/>
         <TextView
@@ -26,12 +27,14 @@
             android:layout_height="wrap_content"
             android:text="@string/demo_text"
             android:layout_toRightOf="@id/imageView_chatChanel_avatar"
+            android:layout_toEndOf="@id/imageView_chatChanel_avatar"
             android:layout_alignTop="@id/imageView_chatChanel_avatar"
             android:padding="8dp"
             android:background="@drawable/rounded_r20dp_white_rect_for_guest_text_message"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/black"
-            android:layout_marginLeft="3dp"/>
+            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +44,9 @@
             android:textColor="@color/grey_800"
             android:layout_below="@id/textView_chatChanel_guest_content"
             android:layout_alignStart="@id/textView_chatChanel_guest_content"
+            android:layout_alignLeft="@id/textView_chatChanel_guest_content"
             android:layout_marginStart="60dp"
+            android:layout_marginLeft="60dp"
             android:layout_marginTop="3dp"
             android:visibility="gone"/>
     </RelativeLayout>
