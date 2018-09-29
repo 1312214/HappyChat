@@ -36,13 +36,18 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
 
     private FirebaseAuth mAuth;
     private Context mContext;
-
+    private MoreFragmentListener mMoreFragmentListener;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
+        if(context instanceof MoreFragmentListener) {
+            mMoreFragmentListener = (MoreFragmentListener)context;
+        } else {
+            throw new ClassCastException("ClassCastException: you must implement MoreFragmentListener.onLoggingOut");
+        }
     }
 
     @Override
@@ -108,11 +113,7 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
         if(currentUser != null) {
             user = ChattingUser.valueOf(currentUser);
             RealTimeDataBaseUtil.getInstance().removeUserFromChatRoom(user);
-
-            // Sign out by the authentication.
-            mAuth.signOut();
-            startActivity(new Intent(mContext, LogInActivity.class));
-            ((HomeActivity)mContext).finish();
+            if(mMoreFragmentListener != null) mMoreFragmentListener.onLoggingOut();
         }
     }
 
@@ -129,6 +130,10 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
 
         AlertDialogFragment dialogFragment = AlertDialogFragment.getInstance(null, msg);
         dialogFragment.show(fm, "logout_dialog");
+    }
+
+    public interface MoreFragmentListener {
+        void onLoggingOut();
     }
 
 }

@@ -69,6 +69,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
         rvContactList.setAdapter(null);
         if(mChatRoomAdapter != null) mChatRoomAdapter = null;
         RealTimeDataBaseUtil.getInstance().mContactList = null;
+        RealTimeDataBaseUtil.getInstance().removeChildEventListenerContactOfCurrAccount();
         super.onDetach();
     }
 

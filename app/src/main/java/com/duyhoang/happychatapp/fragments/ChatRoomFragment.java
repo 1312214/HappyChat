@@ -51,7 +51,6 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
         RealTimeDataBaseUtil.getInstance().setMakingToastListener(this);
         RealTimeDataBaseUtil.getInstance().setmInternetConnectionListener(this);
@@ -84,7 +83,6 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         if(mContext != null) mContext = null;
         rvChattingUserList.setAdapter(null);
         if(mChatRoomAdapter != null) mChatRoomAdapter = null;
-        if(mListener != null) mListener.onHideActionBarOptions();
         RealTimeDataBaseUtil.getInstance().removeMemberNodeChildEventListener();
         RealTimeDataBaseUtil.getInstance().mContactIdList = null;
         RealTimeDataBaseUtil.getInstance().mChatRoomUserList = null;
@@ -124,7 +122,6 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
 
     public interface ChatRoomUserSelectedListener {
         void onShowActionBarOptionsForSelectedUser(ChattingUser selectedUser);
-        void onHideActionBarOptions();
     }
 
     private void initUI(View view){
@@ -143,6 +140,5 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         RealTimeDataBaseUtil.getInstance().downloadContactUserIdList();
         RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
         mChatRoomAdapter.notifyDataSetChanged();
-
     }
 }

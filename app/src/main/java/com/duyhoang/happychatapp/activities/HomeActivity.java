@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,10 +19,13 @@ import com.duyhoang.happychatapp.fragments.MoreFragment;
 import com.duyhoang.happychatapp.fragments.LatestMessageListFragment;
 import com.duyhoang.happychatapp.fragments.ChatRoomFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         ChatRoomFragment.ChatRoomUserSelectedListener, LatestMessageListFragment.RequestRestartLatestMsgFragListener,
-        AlertDialogFragment.AlertDialogFragmentListener{
+        AlertDialogFragment.AlertDialogFragmentListener, MoreFragment.MoreFragmentListener{
 
     public static final String TAG = "HomeActivity";
 
@@ -32,20 +34,43 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     private ActionBar mActionBar;
     private ChattingUser mSelectedUser;
 
+    private LatestMessageListFragment mLatestMessageListFragment = new LatestMessageListFragment();
+    private ContactFragment mContactFragment = new ContactFragment();
+    private ChatRoomFragment mChatRoomFragment = new ChatRoomFragment();
+    private MoreFragment mMoreFragment = new MoreFragment();
+    private Fragment mActiveFrag = mLatestMessageListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        mFragmentManager = getSupportFragmentManager();
-        initUI(savedInstanceState);
 
+        initUI(savedInstanceState);
+    }
+
+    private void initFrags() {
+        mFragmentManager = getSupportFragmentManager();
+        mFragmentManager.beginTransaction()
+                .add(R.id.frameLayout_container, mLatestMessageListFragment, "latest_msg_list_frag" )
+                .hide(mLatestMessageListFragment)
+                .commit();
+        mFragmentManager.beginTransaction()
+                .add(R.id.frameLayout_container, mContactFragment, "contact_frag")
+                .hide(mContactFragment)
+                .commit();
+        mFragmentManager.beginTransaction()
+                .add(R.id.frameLayout_container, mChatRoomFragment, "chat_room_frag")
+                .hide(mChatRoomFragment)
+                .commit();
+        mFragmentManager.beginTransaction()
+                .add(R.id.frameLayout_container, mMoreFragment, "more_frag")
+                .hide(mMoreFragment)
+                .commit();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
     }
 
 
@@ -65,39 +90,59 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         super.onSaveInstanceState(outState);
     }
 
+
+    @Override
+    public void onLoggingOut() {
+        for(Fragment fragment : mFragmentManager.getFragments()) {
+            mFragmentManager.beginTransaction().remove(fragment).commit();
+        }
+        // Sign out by the authentication.
+        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                startActivity(new Intent(HomeActivity.this, LogInActivity.class));
+                finish();
+            }
+        });
+
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_message:
-                if(mFragmentManager.findFragmentByTag("latest_msg_list_frag") == null) {
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag")
-                            .commit();
-                }
+                mFragmentManager.beginTransaction()
+                        .hide(mActiveFrag)
+                        .show(mLatestMessageListFragment)
+                        .commit();
+                mActiveFrag = mLatestMessageListFragment;
+                hideActionBarOptionsIfShowing();
                 return true;
 
             case R.id.action_my_contact:
-                if(mFragmentManager.findFragmentByTag("contact_frag") == null){
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.frameLayout_container, new ContactFragment(), "contact_frag")
-                            .commit();
-                }
+                mFragmentManager.beginTransaction()
+                        .hide(mActiveFrag)
+                        .show(mContactFragment)
+                        .commit();
+                mActiveFrag = mContactFragment;
+                hideActionBarOptionsIfShowing();
                 return true;
 
             case R.id.action_chat_room:
-                if(mFragmentManager.findFragmentByTag("chat_room_frag") == null) {
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.frameLayout_container, new ChatRoomFragment(), "chat_room_frag")
-                            .commit();
-                }
+                mFragmentManager.beginTransaction()
+                        .hide(mActiveFrag)
+                        .show(mChatRoomFragment)
+                        .commit();
+                mActiveFrag = mChatRoomFragment;
                 return true;
 
             case R.id.action_more:
-                if(mFragmentManager.findFragmentByTag("more_frag") == null) {
-                    mFragmentManager.beginTransaction()
-                            .replace(R.id.frameLayout_container, new MoreFragment(), "more_frag")
-                            .commit();
-                }
+                mFragmentManager.beginTransaction()
+                        .hide(mActiveFrag)
+                        .show(mMoreFragment)
+                        .commit();
+                mActiveFrag = mMoreFragment;
+                hideActionBarOptionsIfShowing();
                 return true;
 
         }
@@ -132,11 +177,13 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         mSelectedUser = selectedUser;
     }
 
-    @Override
-    public void onHideActionBarOptions() {
-        mActionBar.hide();
-        mActionBar.setTitle("");
-        mSelectedUser = null;
+
+    private void hideActionBarOptionsIfShowing() {
+        if(mActionBar.isShowing()) {
+            mActionBar.hide();
+            mActionBar.setTitle("");
+            mSelectedUser = null;
+        }
     }
 
 
@@ -146,7 +193,11 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         Fragment frag = mFragmentManager.findFragmentByTag("latest_msg_list_frag");
         if(frag != null) {
             mFragmentManager.beginTransaction().remove(frag).commit();
-            mFragmentManager.beginTransaction().add(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag").commit();
+            mLatestMessageListFragment = new LatestMessageListFragment();
+            mFragmentManager.beginTransaction()
+                    .add(R.id.frameLayout_container, mLatestMessageListFragment, "latest_msg_list_frag")
+                    .commit();
+            mActiveFrag = mLatestMessageListFragment;
         }
     }
 
@@ -161,8 +212,12 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         if(mActionBar != null) getSupportActionBar().hide();
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        if(savedInstanceState == null)
+        if(savedInstanceState == null) {
+            initFrags();
             bottomNavigationView.setSelectedItemId(R.id.action_message);
+            mActiveFrag = mLatestMessageListFragment;
+        }
+
     }
 
 

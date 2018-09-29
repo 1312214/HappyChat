@@ -233,6 +233,9 @@ public class RealTimeDataBaseUtil {
                                     mMakingToastListener.onToast("Added to Contact");
                             }
                         });
+                        if(mContactList.size() == 0) {
+                            downloadContactListFromContactTable();
+                        }
 
                     } else {
                         if (mMakingToastListener != null)
@@ -253,21 +256,45 @@ public class RealTimeDataBaseUtil {
         mMakingToastListener = makingToastListener;
     }
 
+    private ChildEventListener mChildEventListenerContactOfCurrAccount = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            getnsaveChattingUserFromUsersTableIntoContactList(dataSnapshot.getKey());
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
 
     public void downloadContactListFromContactTable() {
 
         if (ConnectionUtil.isAppOnline(mContext)) {
-            String uid = FirebaseAuth.getInstance().getUid();
+            final String uid = FirebaseAuth.getInstance().getUid();
             if (uid != null) {
                 mRefContacts.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren()) {
                             if (mContactListListener != null) mContactListListener.onExistContact();
-                            for (DataSnapshot dss : dataSnapshot.getChildren()) {
-                                getnsaveChattingUserFromUsersTableIntoContactList(dss.getKey());
-                            }
-
+                            mRefContacts.child(uid).addChildEventListener(mChildEventListenerContactOfCurrAccount);
                         } else {
                             if (mContactListListener != null)
                                 mContactListListener.onHaveNoContact();
@@ -286,7 +313,10 @@ public class RealTimeDataBaseUtil {
                 mInternetConnectionListener.onHaveNoInternetConnection();
         }
 
+    }
 
+    public void removeChildEventListenerContactOfCurrAccount() {
+        mRefContacts.child(FirebaseAuth.getInstance().getUid()).removeEventListener(mChildEventListenerContactOfCurrAccount);
     }
 
 
@@ -982,5 +1012,6 @@ public class RealTimeDataBaseUtil {
 
         void onHaveChattyChanel();
     }
+
 
 }

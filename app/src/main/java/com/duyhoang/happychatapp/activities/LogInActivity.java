@@ -141,15 +141,6 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == RC_GOOGLE_LOGIN) {
-            /*GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if(result.isSuccess()) {
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-
-                Toast.makeText(this, "Google sign-in failed", Toast.LENGTH_SHORT).show();
-            }*/
-
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -158,6 +149,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
+                Toast.makeText(this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 // ...
             }
 
@@ -275,8 +267,6 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
             }
         });
     }
-
-
 
 
 
