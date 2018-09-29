@@ -5,10 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,7 +20,6 @@ import com.duyhoang.happychatapp.fragments.MoreFragment;
 import com.duyhoang.happychatapp.fragments.LatestMessageListFragment;
 import com.duyhoang.happychatapp.fragments.ChatRoomFragment;
 import com.duyhoang.happychatapp.models.ChattingUser;
-import com.firebase.ui.auth.AuthUI;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         ChatRoomFragment.ChatRoomUserSelectedListener, LatestMessageListFragment.RequestRestartLatestMsgFragListener,
@@ -39,9 +38,17 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mFragmentManager = getSupportFragmentManager();
-        initUI();
+        initUI(savedInstanceState);
 
     }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+    }
+
+
 
     @Override
     protected void onRestart() {
@@ -52,6 +59,11 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("config_changing", true);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -62,7 +74,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                             .replace(R.id.frameLayout_container, new LatestMessageListFragment(), "latest_msg_list_frag")
                             .commit();
                 }
-
                 return true;
 
             case R.id.action_my_contact:
@@ -71,7 +82,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
                             .replace(R.id.frameLayout_container, new ContactFragment(), "contact_frag")
                             .commit();
                 }
-
                 return true;
 
             case R.id.action_chat_room:
@@ -146,12 +156,13 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         ((MoreFragment) mFragmentManager.findFragmentByTag("more_frag")).logout();
     }
 
-    private void initUI() {
+    private void initUI(Bundle savedInstanceState) {
         mActionBar = getSupportActionBar();
         if(mActionBar != null) getSupportActionBar().hide();
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.action_message);
+        if(savedInstanceState == null)
+            bottomNavigationView.setSelectedItemId(R.id.action_message);
     }
 
 
@@ -165,7 +176,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUser.getUid());
         mActionBar.hide();
     }
-
 
 
 }

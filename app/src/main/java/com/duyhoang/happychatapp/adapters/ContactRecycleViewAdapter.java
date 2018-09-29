@@ -70,7 +70,8 @@ public class ContactRecycleViewAdapter extends RecyclerView.Adapter<ContactRecyc
     }
 
     public void setContactRecycleViewAdapterCallback(ContactRecycleViewAdapterCallback callback) {
-        mContactRecycleViewAdapterCallback = callback;
+        if(mContactRecycleViewAdapterCallback == null)
+            mContactRecycleViewAdapterCallback = callback;
     }
 
     class ContactItemViewHolder extends RecyclerView.ViewHolder {

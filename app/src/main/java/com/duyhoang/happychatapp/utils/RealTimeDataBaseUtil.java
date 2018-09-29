@@ -295,10 +295,13 @@ public class RealTimeDataBaseUtil {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ChattingUser user = dataSnapshot.getValue(ChattingUser.class);
-                mContactList.add(user);
-                if (mContactListListener != null) {
-                    mContactListListener.onAddNewContactIntoContactList(mContactList.size() - 1);
+                if(mContactList != null) {
+                    mContactList.add(user);
+                    if (mContactListListener != null) {
+                        mContactListListener.onAddNewContactIntoContactList(mContactList.size() - 1);
+                    }
                 }
+
 
             }
 

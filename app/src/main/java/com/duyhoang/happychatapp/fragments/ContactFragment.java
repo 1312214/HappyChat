@@ -28,7 +28,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
 
     private RecyclerView rvContactList;
     private ContactRecycleViewAdapter mChatRoomAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+
     private Context mContext;
     private TextView txtStatus;
 
@@ -42,12 +42,9 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RealTimeDataBaseUtil.getInstance().mContactList = new ArrayList<>();
         RealTimeDataBaseUtil.getInstance().setContactListChangedListener(this);
         RealTimeDataBaseUtil.getInstance().setmInternetConnectionListener(this);
-        mChatRoomAdapter = new ContactRecycleViewAdapter(getContext(), RealTimeDataBaseUtil.getInstance().mContactList);
-        mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mChatRoomAdapter.setContactRecycleViewAdapterCallback(this);
+        setRetainInstance(true);
     }
 
 
@@ -56,9 +53,12 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
         initUI(view);
+        RealTimeDataBaseUtil.getInstance().mContactList = new ArrayList<>();
+        mChatRoomAdapter = new ContactRecycleViewAdapter(mContext, RealTimeDataBaseUtil.getInstance().mContactList);
         RealTimeDataBaseUtil.getInstance().downloadContactListFromContactTable();
         rvContactList.setAdapter(mChatRoomAdapter);
-        rvContactList.setLayoutManager(mLinearLayoutManager);
+        rvContactList.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
+        mChatRoomAdapter.setContactRecycleViewAdapterCallback(this);
         return view;
     }
 
@@ -66,6 +66,8 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     @Override
     public void onDetach() {
         if(mContext != null) mContext = null;
+        rvContactList.setAdapter(null);
+        if(mChatRoomAdapter != null) mChatRoomAdapter = null;
         RealTimeDataBaseUtil.getInstance().mContactList = null;
         super.onDetach();
     }

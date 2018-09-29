@@ -69,6 +69,15 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         initUI();
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onClick(View view) {

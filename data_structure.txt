@@ -4,8 +4,8 @@ User {
 }
 
 message {
-	msgID1 {content, type, date, senderid, sendername, chanelid} // , if type =1 TextMsg else  == 2 imageMsg
-	msgID2 {imageUrl, type, date, senderid, sendername, chanelid}
+	msgID1 {msgId, content, type, date, senderid, sendername, chanelid, isRead} // , if type =1 TextMsg else  == 2 imageMsg
+	msgID2 {msgId, imageUrl, type, date, senderid, sendername, chanelid, isRead}
 }
 
 

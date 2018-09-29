@@ -70,6 +70,16 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onStop() {
         if(!isChoosingImage) {
             RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();

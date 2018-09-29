@@ -25,11 +25,11 @@ import java.util.ArrayList;
 public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
         RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener,
         RealTimeDataBaseUtil.InternetConnectionListener{
+
     public static final String TAG = "ChatRoomFragment";
 
     private RecyclerView rvChattingUserList;
     private ChatRoomRecycleViewAdapter mChatRoomAdapter;
-    private GridLayoutManager mGridLayoutManager;
     private Context mContext;
 
     private ChatRoomUserSelectedListener mListener;
@@ -51,15 +51,11 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RealTimeDataBaseUtil.getInstance().mContactIdList = new ArrayList<>();
-        RealTimeDataBaseUtil.getInstance().mChatRoomUserList = new ArrayList<>();
+
         RealTimeDataBaseUtil.getInstance().setChatRoomUserQuantityChangedListener(this);
         RealTimeDataBaseUtil.getInstance().setMakingToastListener(this);
         RealTimeDataBaseUtil.getInstance().setmInternetConnectionListener(this);
-        RealTimeDataBaseUtil.getInstance().downloadContactUserIdList();
-        mChatRoomAdapter = new ChatRoomRecycleViewAdapter(mContext, RealTimeDataBaseUtil.getInstance().mChatRoomUserList);
-        mGridLayoutManager = new GridLayoutManager(mContext, 2, GridLayoutManager.VERTICAL, false);
-        mChatRoomAdapter.setChatRoomRecycleViewListener(this);
+        setRetainInstance(true);
     }
 
 
@@ -69,9 +65,16 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_room_chat, container, false);
         initUI(view);
+
+        RealTimeDataBaseUtil.getInstance().mContactIdList = new ArrayList<>();
+        RealTimeDataBaseUtil.getInstance().mChatRoomUserList = new ArrayList<>();
+        RealTimeDataBaseUtil.getInstance().downloadContactUserIdList();
+        mChatRoomAdapter = new ChatRoomRecycleViewAdapter(mContext, RealTimeDataBaseUtil.getInstance().mChatRoomUserList);
         RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
+        mChatRoomAdapter.setChatRoomRecycleViewListener(this);
+
         rvChattingUserList.setAdapter(mChatRoomAdapter);
-        rvChattingUserList.setLayoutManager(mGridLayoutManager);
+        rvChattingUserList.setLayoutManager(new GridLayoutManager(mContext, 2, GridLayoutManager.VERTICAL, false));
         return view;
     }
 
@@ -79,6 +82,8 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     @Override
     public void onDetach() {
         if(mContext != null) mContext = null;
+        rvChattingUserList.setAdapter(null);
+        if(mChatRoomAdapter != null) mChatRoomAdapter = null;
         if(mListener != null) mListener.onHideActionBarOptions();
         RealTimeDataBaseUtil.getInstance().removeMemberNodeChildEventListener();
         RealTimeDataBaseUtil.getInstance().mContactIdList = null;

@@ -20,6 +20,11 @@ import com.duyhoang.happychatapp.activities.LogInActivity;
 import com.duyhoang.happychatapp.activities.ProfileActivity;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,8 +35,8 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
     private LinearLayout lnlProfile, lnlLogout, lnlAccountSetting, lnlFeedback, lnlTerms;
 
     private FirebaseAuth mAuth;
-    private AuthUI mAuthUI;
     private Context mContext;
+
 
 
     @Override
@@ -44,7 +49,10 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        mAuthUI = AuthUI.getInstance();
+        setRetainInstance(true);
+
+
+
     }
 
     @Nullable
@@ -102,13 +110,9 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
             RealTimeDataBaseUtil.getInstance().removeUserFromChatRoom(user);
 
             // Sign out by the authentication.
-            mAuthUI.signOut(mContext).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    startActivity(new Intent(mContext, LogInActivity.class));
-                    ((HomeActivity)mContext).finish();
-                }
-            });
+            mAuth.signOut();
+            startActivity(new Intent(mContext, LogInActivity.class));
+            ((HomeActivity)mContext).finish();
         }
     }
 
