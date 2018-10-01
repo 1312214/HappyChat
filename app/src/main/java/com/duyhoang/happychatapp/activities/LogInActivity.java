@@ -230,6 +230,7 @@ public class LogInActivity extends BaseActivity implements View.OnClickListener 
 
     private void openRegisterScreen() {
         startActivity(new Intent(this, RegisterActivity.class));
+        finish();
     }
 
     private void loginWithEmailAndPassword() {

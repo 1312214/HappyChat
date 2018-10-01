@@ -124,7 +124,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+            startActivity(new Intent(this, LogInActivity.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

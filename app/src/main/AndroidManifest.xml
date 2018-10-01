@@ -17,8 +17,7 @@
         <activity android:name=".activities.LogInActivity"
             android:theme="@style/NoActionBar"/>
         <activity
-            android:name=".activities.RegisterActivity"
-            android:parentActivityName=".activities.LogInActivity" />
+            android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.ProfileActivity" />
         <activity
