@@ -511,7 +511,7 @@ public class RealTimeDataBaseUtil {
 
     public void uploadMessageToFirebaseDatabase(final Message message, final String receiverUserId) {
         // upload new message to the messages table
-        // mark id of new message into the chanel_message talble.
+        // mark id of new message into the chanel_message table.
         String currUid = FirebaseAuth.getInstance().getUid();
         if (currUid != null)
             mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import com.google.firebase.auth.FirebaseUser;
 
+
 /**
  * Created by rogerh on 8/27/2018.
  */
@@ -24,12 +25,21 @@ public class AppConfig extends Application {
     private static SharedPreferences.Editor editor;
     private static Context context;
 
+
+
     @Override
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getSharedPreferences("preferences.xml", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         context = getApplicationContext();
+
+        /*if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);*/
 
     }
 

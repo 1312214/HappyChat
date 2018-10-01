@@ -103,7 +103,7 @@ public class ChatChanelRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         final Message msg = mMessageCatalog.get(position);
-        if(!msg.isRead() && msg.getSenderId().equals(guest.getUid())){
+        if(!msg.getIsRead() && msg.getSenderId().equals(guest.getUid())){
             RealTimeDataBaseUtil.getInstance().markAsReadForMessage(msg.getMsgId());
         }
 

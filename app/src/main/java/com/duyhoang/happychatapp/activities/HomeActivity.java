@@ -8,8 +8,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.fragments.dialog.AlertDialogFragment;
@@ -24,7 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
-        ChatRoomFragment.ChatRoomUserSelectedListener, LatestMessageListFragment.RequestRestartLatestMsgFragListener,
+        ChatRoomFragment.ChatRoomUserSelectedListener,
         AlertDialogFragment.AlertDialogFragmentListener, MoreFragment.MoreFragmentListener{
 
     public static final String TAG = "HomeActivity";
@@ -75,14 +77,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
 
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Fragment currFragment = mFragmentManager.findFragmentById(R.id.frameLayout_container);
-        if(currFragment instanceof ChatRoomFragment) {
-            ((ChatRoomFragment)currFragment).refreshChatRoom();
-        }
-    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -111,12 +106,18 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_message:
-                mFragmentManager.beginTransaction()
-                        .hide(mActiveFrag)
-                        .show(mLatestMessageListFragment)
-                        .commit();
-                mActiveFrag = mLatestMessageListFragment;
-                hideActionBarOptionsIfShowing();
+                if(!(mActiveFrag instanceof LatestMessageListFragment)) {
+                    mFragmentManager.beginTransaction()
+                            .hide(mActiveFrag)
+                            .show(mLatestMessageListFragment)
+                            .commit();
+                    mActiveFrag = mLatestMessageListFragment;
+                    hideActionBarOptionsIfShowing();
+                } else {
+                    mFragmentManager.beginTransaction()
+                            .show(mLatestMessageListFragment)
+                            .commit();
+                }
                 return true;
 
             case R.id.action_my_contact:
@@ -188,23 +189,13 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
 
 
-    @Override
-    public void onRestartLatestMsgFrag() {
-        Fragment frag = mFragmentManager.findFragmentByTag("latest_msg_list_frag");
-        if(frag != null) {
-            mFragmentManager.beginTransaction().remove(frag).commit();
-            mLatestMessageListFragment = new LatestMessageListFragment();
-            mFragmentManager.beginTransaction()
-                    .add(R.id.frameLayout_container, mLatestMessageListFragment, "latest_msg_list_frag")
-                    .commit();
-            mActiveFrag = mLatestMessageListFragment;
-        }
-    }
-
 
     @Override
     public void onPositiveButtonClicked() {
-        ((MoreFragment) mFragmentManager.findFragmentByTag("more_frag")).logout();
+        Fragment frag = mFragmentManager.findFragmentByTag("more_frag");
+        if(frag != null && frag.isAdded()) {
+            ((MoreFragment)frag).logout();
+        }
     }
 
     private void initUI(Bundle savedInstanceState) {
@@ -215,7 +206,6 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         if(savedInstanceState == null) {
             initFrags();
             bottomNavigationView.setSelectedItemId(R.id.action_message);
-            mActiveFrag = mLatestMessageListFragment;
         }
 
     }

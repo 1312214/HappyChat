@@ -46,7 +46,7 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     private ChattingUser mGuest;
     private Uri selectedImgUri;
     private ChattingUser currLoginedUser;
-    private boolean isChoosingImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,19 +79,13 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    protected void onStop() {
-        if(!isChoosingImage) {
-            RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();
-        }
-        super.onStop();
-
-    }
 
 
     @Override
     protected void onDestroy() {
+        RealTimeDataBaseUtil.getInstance().removeChildEventListenerOnCurrentChanelMessageId();
         RealTimeDataBaseUtil.getInstance().mChattyChanelMessageList = null;
+        mLinearLayoutManager = null;
         super.onDestroy();
     }
 
@@ -139,7 +133,6 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == MY_PERMISSION_READ_EXTERNAL_STORAGE && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            isChoosingImage = true;
             pickImageInGallery();
         }
     }
@@ -149,7 +142,6 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_GALLERY_REQUEST) {
-            isChoosingImage = false;
             if(resultCode == RESULT_OK){
                 selectedImgUri = data.getData();
                 StorageUtil.getInstance().uploadMessageImageToStorage(selectedImgUri, this);
@@ -208,7 +200,6 @@ public class ChatChanelActivity extends BaseActivity implements View.OnClickList
 
     private void sendImageMessage() {
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
-            isChoosingImage = true;
             pickImageInGallery();
         } else {
             runRequestRuntimePermission(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_READ_EXTERNAL_STORAGE,

@@ -22,6 +22,7 @@ import com.duyhoang.happychatapp.models.message.Message;
 import com.duyhoang.happychatapp.models.message.TextMessage;
 
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -71,6 +72,15 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(!chattyChanel.getLastestMessage().getIsRead()){
+                    if(chattyChanel.getLastestMessage().getSenderId().equals(chattyChanel.getGuestUser().getUid())){
+                        holder.txtName.setTypeface(Typeface.create(holder.txtName.getTypeface(), Typeface.NORMAL), Typeface.NORMAL);
+                        holder.txtLastMessage.setTextColor(ActivityCompat.getColor(mContext, R.color.grey_600));
+                        holder.txtLastTime.setTextColor(ActivityCompat.getColor(mContext, R.color.grey_600));
+                    }
+                }
+
                 ChattingUser guestUser = mChattyChanelList.get(holder.getAdapterPosition()).getGuestUser();
                 Intent intent = new Intent(mContext, ChatChanelActivity.class);
                 intent.putExtra("selected_contact", guestUser);
@@ -78,7 +88,7 @@ public class ChattyChanelListRecycleViewAdapter extends RecyclerView.Adapter<Cha
             }
         });
 
-        if(!chattyChanel.getLastestMessage().isRead()){
+        if(!chattyChanel.getLastestMessage().getIsRead()){
             if(chattyChanel.getLastestMessage().getSenderId().equals(chattyChanel.getGuestUser().getUid())){
                 holder.txtName.setTypeface(holder.txtName.getTypeface(), Typeface.BOLD);
                 holder.txtLastMessage.setTextColor(ActivityCompat.getColor(mContext, R.color.black));

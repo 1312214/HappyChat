@@ -30,18 +30,13 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     private RecyclerView rvChattyChanelList;
     private TextView txtStatus;
     private ChattyChanelListRecycleViewAdapter mChattyChanelListAdapter;
-    private RequestRestartLatestMsgFragListener mListener;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        if(context instanceof RequestRestartLatestMsgFragListener) {
-            mListener = (RequestRestartLatestMsgFragListener) context;
-        } else {
-            throw new ClassCastException(context.toString() + "must implement RequestRestartLatestMsgFragListener.onRestartLatestMsgFrag");
-        }
-        Log.e(TAG, "onAttach");
+//        Log.e(TAG, "onAttach");
     }
 
     @Override
@@ -51,7 +46,7 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
         RealTimeDataBaseUtil.getInstance().setChattyChanelListListener(this);
         RealTimeDataBaseUtil.getInstance().setmInternetConnectionListener(this);
         setRetainInstance(true);
-        Log.e(TAG, "onCreate");
+//        Log.e(TAG, "onCreate");
     }
 
     @Nullable
@@ -64,17 +59,21 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
         rvChattyChanelList.setAdapter(mChattyChanelListAdapter);
         rvChattyChanelList.setLayoutManager(new LinearLayoutManager(mContext));
         RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
-        Log.e(TAG, "onCreateView");
+//        Log.e(TAG, "onCreateView");
         return root;
     }
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.e(TAG, "onResume");
+    public void onStart() {
+        super.onStart();
+//        Log.e(TAG, "onStart");
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+//        Log.e(TAG, "onStop");
+    }
 
     @Override
     public void onDetach() {
@@ -111,7 +110,7 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     @Override
     public void onAppearChildNode() {
         RealTimeDataBaseUtil.getInstance().removeChildValueEventListenerForUserChanelNode();
-        if(mListener != null) mListener.onRestartLatestMsgFrag();
+        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
     }
 
 
@@ -135,8 +134,15 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
         txtStatus = root.findViewById(R.id.textView_latestMessage_status);
     }
 
-    public interface RequestRestartLatestMsgFragListener {
-        void onRestartLatestMsgFrag();
-    }
+    /*public void refreshChattyChanelList() {
+        int size = RealTimeDataBaseUtil.getInstance().mChattyChanelList.size();
+        for(int i = size - 1; i >= 0 ; i--) {
+            RealTimeDataBaseUtil.getInstance().mChattyChanelList.remove(i);
+        }
+        mChattyChanelListAdapter.notifyDataSetChanged();
+        RealTimeDataBaseUtil.getInstance().removeChildEventListenerForUserChanelId();
+        RealTimeDataBaseUtil.getInstance().removeAllValueEventListenerAttachedToLatestMessageNode();
+        RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
+    }*/
 
 }

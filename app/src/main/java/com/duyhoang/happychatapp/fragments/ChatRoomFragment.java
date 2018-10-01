@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.duyhoang.happychatapp.AppConfig;
 import com.duyhoang.happychatapp.R;
 import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
@@ -76,6 +77,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         rvChattingUserList.setLayoutManager(new GridLayoutManager(mContext, 2, GridLayoutManager.VERTICAL, false));
         return view;
     }
+
 
 
     @Override

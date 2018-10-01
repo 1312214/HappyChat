@@ -15,6 +15,14 @@ public class Message {
     protected String chanelId;
     protected boolean isRead;
 
+    public boolean getIsRead() {
+        return isRead;
+    }
+
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 
     public String getMsgId() {
         return msgId;
@@ -24,13 +32,7 @@ public class Message {
         this.msgId = msgId;
     }
 
-    public boolean isRead() {
-        return isRead;
-    }
 
-    public void setRead(boolean read) {
-        isRead = read;
-    }
 
     public String getChanelId() {
         return chanelId;
