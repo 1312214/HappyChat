@@ -8,6 +8,9 @@
 #### - See edit your profile
 <br>
 
+### [Demo video](https://youtu.be/5zWu_3Eeg48)
+
+
 ### Screenshot
 
 #### 1. Splash screen
