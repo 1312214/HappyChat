@@ -1,12 +1,12 @@
 # HappyChat - Android application
-###### A real-time message application that allows users to communicate with others through using the following features:
+### A real-time message application that allows users to communicate with others through using the following features:
 
-###### Send text message and image 
-###### Receive text message and image 
-###### Adding friend by chatroom function.
-###### See other person' profile
-###### See edit your profile
-
+#### Send text message and image 
+#### Receive text message and image 
+#### Adding friend by chatroom function.
+#### See other person' profile
+#### See edit your profile
+<br>
 
 ### Screenshot
 
@@ -19,7 +19,7 @@
 #### 3. Registation screen
 ![ Registation screen.png](/screenshot/registation.png)
 
-####4.  Messages screen
+#### 4.  Messages screen
 ![ Messages screen.png](/screenshot/message.png)
 
 #### 5. Contact screen
