@@ -39,8 +39,6 @@ public class LatestMessageListFragment extends BaseFragment implements RealTimeD
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        RealTimeDataBaseUtil.getInstance().setContext((HomeActivity)context);
-
         if(context instanceof LatestMessageListFragListener) {
             mLatestMessageListFragListener = ((LatestMessageListFragListener)context);
         } else {

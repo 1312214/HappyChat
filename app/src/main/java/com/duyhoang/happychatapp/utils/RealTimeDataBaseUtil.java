@@ -1,11 +1,13 @@
 package com.duyhoang.happychatapp.utils;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.duyhoang.happychatapp.AppConfig;
 import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.duyhoang.happychatapp.models.ChattyChanel;
@@ -66,7 +68,7 @@ public class RealTimeDataBaseUtil {
     private String currChanelMessageId;
 
     private Handler mHandler;
-    private WeakReference<HomeActivity> mContext;
+    private WeakReference<Context> mContext;
 
     private ChattyChanelDownloadTask mChattyChanelDownloadTask;
 
@@ -74,6 +76,7 @@ public class RealTimeDataBaseUtil {
     private static RealTimeDataBaseUtil realTimeDataBaseUtil;
 
     private RealTimeDataBaseUtil() {
+        mContext = new WeakReference<>(AppConfig.getAppContext());
         mHandler = new Handler(Looper.getMainLooper());
         mRefUsers = FirebaseDatabase.getInstance().getReference("users");
         mRefChatRoom = FirebaseDatabase.getInstance().getReference("chat_room");
@@ -84,12 +87,6 @@ public class RealTimeDataBaseUtil {
         mRefMessages = FirebaseDatabase.getInstance().getReference("messages");
 
     }
-
-    public void setContext(HomeActivity context) {
-        if(mContext == null)
-            mContext= new WeakReference<>(context);
-    }
-
 
 
 
