@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -97,9 +96,9 @@ public class ChatRoomFragment extends BaseFragment implements RealTimeDataBaseUt
     }
 
     @Override
-    public void onToast(String message) {
+    public void onToast(String message, String addedFriendId) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-        refreshChatRoom();
+        updateChatRoom(addedFriendId);
     }
 
     @Override
@@ -120,17 +119,8 @@ public class ChatRoomFragment extends BaseFragment implements RealTimeDataBaseUt
         txtStatus.setVisibility(View.INVISIBLE);
     }
 
-    public void refreshChatRoom() {
-        int n = RealTimeDataBaseUtil.getInstance().mContactIdList.size();
-        for(int i = n-1; i >= 0 ; i--) {
-            RealTimeDataBaseUtil.getInstance().mContactIdList.remove(i);
-        }
-        int m = RealTimeDataBaseUtil.getInstance().mChatRoomUserList.size();
-        for(int j = m-1; j >= 0 ; j--) {
-            RealTimeDataBaseUtil.getInstance().mChatRoomUserList.remove(j);
-        }
-        RealTimeDataBaseUtil.getInstance().downloadContactUserIdList();
-        RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
+    public void updateChatRoom(String addedFriendId) {
+        RealTimeDataBaseUtil.getInstance().mContactIdList.add(addedFriendId);
         mChatRoomAdapter.notifyDataSetChanged();
     }
 

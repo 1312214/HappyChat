@@ -237,7 +237,7 @@ public class RealTimeDataBaseUtil {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (mMakingToastListener != null)
-                                    mMakingToastListener.onToast("Added to Contact");
+                                    mMakingToastListener.onToast("Added to Contact", friendID);
                             }
                         });
                         if(mContactList.size() == 0) {
@@ -246,7 +246,7 @@ public class RealTimeDataBaseUtil {
 
                     } else {
                         if (mMakingToastListener != null)
-                            mMakingToastListener.onToast("This User already added");
+                            mMakingToastListener.onToast("This User already added", null);
                     }
                 }
 
@@ -1017,7 +1017,7 @@ public class RealTimeDataBaseUtil {
     }
 
     public interface MakingToastListener {
-        void onToast(String message);
+        void onToast(String message, String addedFriendId);
     }
 
     public interface ChattyChanelListListener {
