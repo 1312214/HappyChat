@@ -30,9 +30,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MoreFragment extends Fragment implements View.OnClickListener, AlertDialogFragment.AlertDialogFragmentListener {
+public class MoreFragment extends BaseFragment implements View.OnClickListener, AlertDialogFragment.AlertDialogFragmentListener {
 
-    private LinearLayout lnlProfile, lnlLogout, lnlAccountSetting, lnlFeedback, lnlTerms;
+    LinearLayout lnlProfile, lnlLogout, lnlAccountSetting, lnlFeedback, lnlTerms;
 
     private FirebaseAuth mAuth;
     private Context mContext;
@@ -55,9 +55,6 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         setRetainInstance(true);
-
-
-
     }
 
     @Nullable
@@ -107,6 +104,7 @@ public class MoreFragment extends Fragment implements View.OnClickListener, Aler
 
 
     public void logout() {
+
         //Perform remove the current user from Chatting room.
         ChattingUser user;
         FirebaseUser currentUser = mAuth.getCurrentUser();

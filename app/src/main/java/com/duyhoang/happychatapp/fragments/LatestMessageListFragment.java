@@ -22,7 +22,7 @@ import com.duyhoang.happychatapp.adapters.ChattyChanelListRecycleViewAdapter;
 
 import java.util.ArrayList;
 
-public class LatestMessageListFragment extends Fragment implements RealTimeDataBaseUtil.ChattyChanelListListener, RealTimeDataBaseUtil.UserChanelNodeOnStoreListener,
+public class LatestMessageListFragment extends BaseFragment implements RealTimeDataBaseUtil.ChattyChanelListListener, RealTimeDataBaseUtil.UserChanelNodeOnStoreListener,
         RealTimeDataBaseUtil.InternetConnectionListener, View.OnClickListener {
 
     public final static String TAG = "LatestMessageListFrag";
@@ -144,6 +144,7 @@ public class LatestMessageListFragment extends Fragment implements RealTimeDataB
     }
 
 
+    @Override
     public void reloadData() {
         RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
     }

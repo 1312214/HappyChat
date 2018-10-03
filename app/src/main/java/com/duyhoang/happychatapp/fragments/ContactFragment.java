@@ -21,7 +21,7 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 
 import java.util.ArrayList;
 
-public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.ContactListListener,
+public class ContactFragment extends BaseFragment implements RealTimeDataBaseUtil.ContactListListener,
         ContactRecycleViewAdapter.ContactRecycleViewAdapterCallback, RealTimeDataBaseUtil.InternetConnectionListener {
 
     private RecyclerView rvContactList;
@@ -108,6 +108,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
         rvContactList.setVisibility(View.INVISIBLE);
     }
 
+    @Override
     public void reloadData() {
         RealTimeDataBaseUtil.getInstance().downloadContactListFromContactTable();
     }

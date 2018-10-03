@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.duyhoang.happychatapp.R;
+import com.duyhoang.happychatapp.adapters.ViewPagerAdapter;
+import com.duyhoang.happychatapp.fragments.BaseFragment;
 import com.duyhoang.happychatapp.fragments.dialog.AlertDialogFragment;
 import com.duyhoang.happychatapp.utils.ConnectionUtil;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
@@ -33,47 +36,30 @@ import com.google.android.gms.tasks.Task;
 public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         ChatRoomFragment.ChatRoomUserSelectedListener,
         AlertDialogFragment.AlertDialogFragmentListener, MoreFragment.MoreFragmentListener,
-        LatestMessageListFragment.LatestMessageListFragListener {
+        LatestMessageListFragment.LatestMessageListFragListener, ViewPager.OnPageChangeListener {
 
     public static final String TAG = "HomeActivity";
 
-    private BottomNavigationView bottomNavigationView;
-    private FragmentManager mFragmentManager;
+    BottomNavigationView bottomNavigationView;
+    ViewPager viewPager;
+
     private ActionBar mActionBar;
     private ChattingUser mSelectedUser;
-
-    private LatestMessageListFragment mLatestMessageListFragment = new LatestMessageListFragment();
-    private ContactFragment mContactFragment = new ContactFragment();
-    private ChatRoomFragment mChatRoomFragment = new ChatRoomFragment();
-    private MoreFragment mMoreFragment = new MoreFragment();
-    private Fragment mActiveFrag = mLatestMessageListFragment;
+    private ViewPagerAdapter mViewPagerAdapter;
+    private MenuItem mPrevSelectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        initUI(savedInstanceState);
+        initUI();
+        if (savedInstanceState == null) {
+            bottomNavigationView.setSelectedItemId(R.id.action_message);
+        }
+        setUpViewPagerAdapter();
     }
 
-    private void initFrags() {
-        mFragmentManager = getSupportFragmentManager();
-        mFragmentManager.beginTransaction()
-                .add(R.id.frameLayout_container, mLatestMessageListFragment, "latest_msg_list_frag")
-                .hide(mLatestMessageListFragment)
-                .commit();
-        mFragmentManager.beginTransaction()
-                .add(R.id.frameLayout_container, mContactFragment, "contact_frag")
-                .hide(mContactFragment)
-                .commit();
-        mFragmentManager.beginTransaction()
-                .add(R.id.frameLayout_container, mChatRoomFragment, "chat_room_frag")
-                .hide(mChatRoomFragment)
-                .commit();
-        mFragmentManager.beginTransaction()
-                .add(R.id.frameLayout_container, mMoreFragment, "more_frag")
-                .hide(mMoreFragment)
-                .commit();
-    }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -94,9 +80,8 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onLoggingOut() {
-        for (Fragment fragment : mFragmentManager.getFragments()) {
-            mFragmentManager.beginTransaction().remove(fragment).commit();
-        }
+        mViewPagerAdapter.removeAllFragment();
+
         // Sign out by the authentication.
         AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -112,44 +97,22 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_message:
-                if (!(mActiveFrag instanceof LatestMessageListFragment)) {
-                    mFragmentManager.beginTransaction()
-                            .hide(mActiveFrag)
-                            .show(mLatestMessageListFragment)
-                            .commit();
-                    mActiveFrag = mLatestMessageListFragment;
-                    hideActionBarOptionsIfShowing();
-                } else {
-                    mFragmentManager.beginTransaction()
-                            .show(mLatestMessageListFragment)
-                            .commit();
-                }
-
+                viewPager.setCurrentItem(0);
+                hideActionBarOptionsIfShowing();
                 return true;
 
             case R.id.action_my_contact:
-                mFragmentManager.beginTransaction()
-                        .hide(mActiveFrag)
-                        .show(mContactFragment)
-                        .commit();
-                mActiveFrag = mContactFragment;
+                viewPager.setCurrentItem(1);
                 hideActionBarOptionsIfShowing();
                 return true;
 
             case R.id.action_chat_room:
-                mFragmentManager.beginTransaction()
-                        .hide(mActiveFrag)
-                        .show(mChatRoomFragment)
-                        .commit();
-                mActiveFrag = mChatRoomFragment;
+                viewPager.setCurrentItem(2);
+                hideActionBarOptionsIfShowing();
                 return true;
 
             case R.id.action_more:
-                mFragmentManager.beginTransaction()
-                        .hide(mActiveFrag)
-                        .show(mMoreFragment)
-                        .commit();
-                mActiveFrag = mMoreFragment;
+                viewPager.setCurrentItem(3);
                 hideActionBarOptionsIfShowing();
                 return true;
 
@@ -201,22 +164,16 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onPositiveButtonClicked() {
-        Fragment frag = mFragmentManager.findFragmentByTag("more_frag");
-        if (frag != null && frag.isAdded()) {
-            ((MoreFragment) frag).logout();
-        }
+        ((MoreFragment)mViewPagerAdapter.getItem(3)).logout();
     }
 
-    private void initUI(Bundle savedInstanceState) {
+    private void initUI() {
         mActionBar = getSupportActionBar();
         if (mActionBar != null) getSupportActionBar().hide();
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        viewPager = findViewById(R.id.viewPager_home);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        if (savedInstanceState == null) {
-            initFrags();
-            bottomNavigationView.setSelectedItemId(R.id.action_message);
-        }
-
+        viewPager.addOnPageChangeListener(this);
     }
 
 
@@ -233,10 +190,45 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public void onReloadDataOfAllFragment() {
-        mLatestMessageListFragment.reloadData();
-        mContactFragment.reloadData();
-        mChatRoomFragment.reloadData();
+        BaseFragment msgFrag = (BaseFragment) mViewPagerAdapter.getItem(0);
+        msgFrag.reloadData();
+        BaseFragment contactFrag = (BaseFragment)mViewPagerAdapter.getItem(1);
+        contactFrag.reloadData();
+
     }
 
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if(mPrevSelectedItem != null) {
+            mPrevSelectedItem.setChecked(false);
+        } else {
+            bottomNavigationView.getMenu().getItem(0).setChecked(false);
+        }
+        Log.e("page", "onPageSelected: "+position);
+        bottomNavigationView.getMenu().getItem(position).setChecked(true);
+        mPrevSelectedItem = bottomNavigationView.getMenu().getItem(position);
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+
+    private void setUpViewPagerAdapter() {
+        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mViewPagerAdapter.addFragment(new LatestMessageListFragment());
+        mViewPagerAdapter.addFragment(new ContactFragment());
+        mViewPagerAdapter.addFragment(new ChatRoomFragment());
+        mViewPagerAdapter.addFragment(new MoreFragment());
+        viewPager.setAdapter(mViewPagerAdapter);
+    }
 
 }

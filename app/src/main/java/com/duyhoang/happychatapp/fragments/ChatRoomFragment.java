@@ -20,7 +20,7 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 
 import java.util.ArrayList;
 
-public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
+public class ChatRoomFragment extends BaseFragment implements RealTimeDataBaseUtil.ChatRoomUserQuantityChangedListener,
         RealTimeDataBaseUtil.MakingToastListener, ChatRoomRecycleViewAdapter.ChatRoomRecycleViewListener,
         RealTimeDataBaseUtil.InternetConnectionListener{
 
@@ -106,6 +106,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     public void onHaveNoInternetConnection() {
         txtStatus.setText("No Internet Connection");
         txtStatus.setVisibility(View.VISIBLE);
+        rvChattingUserList.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -116,6 +117,7 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
     private void initUI(View view){
         rvChattingUserList = view.findViewById(R.id.recyclerView_chatRoom_user_list);
         txtStatus = view.findViewById(R.id.textView_chatRoom_status);
+        txtStatus.setVisibility(View.INVISIBLE);
     }
 
     public void refreshChatRoom() {
@@ -132,11 +134,12 @@ public class ChatRoomFragment extends Fragment implements RealTimeDataBaseUtil.C
         mChatRoomAdapter.notifyDataSetChanged();
     }
 
-
+    @Override
     public void reloadData() {
-        txtStatus.setVisibility(View.INVISIBLE);
+        if(txtStatus != null) txtStatus.setVisibility(View.INVISIBLE);
         RealTimeDataBaseUtil.getInstance().downloadChattingUserVisibleListFromRoomChatTable();
     }
+
 
 
     public interface ChatRoomUserSelectedListener {
