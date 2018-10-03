@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/menu_bottom_navigation"
         app:elevation="15dp"
-        app:labelVisibilityMode="labeled"
-        android:background="@color/white"/>
 
+        android:background="@color/white"/>
+    <!--app:labelVisibilityMode="labeled"-->
 </android.support.constraint.ConstraintLayout>

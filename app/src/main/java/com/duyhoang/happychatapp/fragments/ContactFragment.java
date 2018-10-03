@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.duyhoang.happychatapp.R;
-import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.utils.RealTimeDataBaseUtil;
 import com.duyhoang.happychatapp.activities.ChatChanelActivity;
 import com.duyhoang.happychatapp.adapters.ContactRecycleViewAdapter;
@@ -24,7 +22,7 @@ import com.duyhoang.happychatapp.models.ChattingUser;
 import java.util.ArrayList;
 
 public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.ContactListListener,
-        ContactRecycleViewAdapter.ContactRecycleViewAdapterCallback, RealTimeDataBaseUtil.InternetConnectionListener{
+        ContactRecycleViewAdapter.ContactRecycleViewAdapterCallback, RealTimeDataBaseUtil.InternetConnectionListener {
 
     private RecyclerView rvContactList;
     private ContactRecycleViewAdapter mChatRoomAdapter;
@@ -43,7 +41,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RealTimeDataBaseUtil.getInstance().setContactListChangedListener(this);
-        RealTimeDataBaseUtil.getInstance().setmInternetConnectionListener(this);
+        RealTimeDataBaseUtil.getInstance().setmInternetConnectionContactFragListener(this);
         setRetainInstance(true);
     }
 
@@ -85,6 +83,7 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
 
     @Override
     public void onHaveNoContact() {
+        txtStatus.setText("No Contact");
         txtStatus.setVisibility(View.VISIBLE);
         rvContactList.setVisibility(View.INVISIBLE);
     }
@@ -102,18 +101,14 @@ public class ContactFragment extends Fragment implements RealTimeDataBaseUtil.Co
         startActivity(intent);
     }
 
-
     @Override
     public void onHaveNoInternetConnection() {
-        Snackbar.make(((HomeActivity)mContext).findViewById(android.R.id.content), "No Internet Connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Retry", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        RealTimeDataBaseUtil.getInstance().downloadContactListFromContactTable();
-                    }
-                }).show();
-        txtStatus.setText("You're offline");
+        txtStatus.setText("No Internet Connection");
         txtStatus.setVisibility(View.VISIBLE);
         rvContactList.setVisibility(View.INVISIBLE);
+    }
+
+    public void reloadData() {
+        RealTimeDataBaseUtil.getInstance().downloadContactListFromContactTable();
     }
 }

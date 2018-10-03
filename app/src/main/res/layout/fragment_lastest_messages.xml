@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <TextView
         android:id="@+id/textView_latestMessage_status"
         android:text="@string/status"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:textColor="@color/grey_500"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="invisible"
+        android:layout_centerInParent="true"/>
+    <Button
+        android:id="@+id/button_latestMessage_retry"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="@string/retry"
+        android:layout_below="@id/textView_latestMessage_status"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:visibility="invisible"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recyclerView_latest_msg_list"/>
+        android:id="@+id/recyclerView_latest_msg_list"
+        android:layout_centerInParent="true"/>
 
-</FrameLayout>
+</RelativeLayout>

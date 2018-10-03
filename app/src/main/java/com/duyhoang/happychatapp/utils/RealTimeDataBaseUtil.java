@@ -1,14 +1,12 @@
 package com.duyhoang.happychatapp.utils;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.duyhoang.happychatapp.AppConfig;
+import com.duyhoang.happychatapp.activities.HomeActivity;
 import com.duyhoang.happychatapp.models.ChattingUser;
 import com.duyhoang.happychatapp.models.ChattyChanel;
 import com.duyhoang.happychatapp.models.message.ImageMessage;
@@ -24,7 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -32,7 +30,7 @@ import java.util.List;
 
 public class RealTimeDataBaseUtil {
 
-    public static final String TAG = "RealTimeDataBaseUtil";
+    private static final String TAG = "RealTimeDataBaseUtil";
 
     // Database references
     private DatabaseReference mRefUsers;
@@ -60,13 +58,15 @@ public class RealTimeDataBaseUtil {
     private UpdatingCompletionProfileListener mUpdatingCompletionProfileListener;
     private DownloadCurrentUserInfoListener mDownloadCurrentUserInfoListener;
     private CheckingContactExistenceListener mCheckingContactExistenceListener;
-    private InternetConnectionListener mInternetConnectionListener;
+    private InternetConnectionListener mInternetConnectionMessageFragListener;
+    private InternetConnectionListener mInternetConnectionContactFragListener;
+    private InternetConnectionListener mInternetConnectionChatRoomFragListener;
 
     // Temp variables
     private String currChanelMessageId;
 
     private Handler mHandler;
-    private Context mContext;
+    private WeakReference<HomeActivity> mContext;
 
     private ChattyChanelDownloadTask mChattyChanelDownloadTask;
 
@@ -74,7 +74,6 @@ public class RealTimeDataBaseUtil {
     private static RealTimeDataBaseUtil realTimeDataBaseUtil;
 
     private RealTimeDataBaseUtil() {
-        mContext = AppConfig.getAppContext();
         mHandler = new Handler(Looper.getMainLooper());
         mRefUsers = FirebaseDatabase.getInstance().getReference("users");
         mRefChatRoom = FirebaseDatabase.getInstance().getReference("chat_room");
@@ -85,6 +84,14 @@ public class RealTimeDataBaseUtil {
         mRefMessages = FirebaseDatabase.getInstance().getReference("messages");
 
     }
+
+    public void setContext(HomeActivity context) {
+        if(mContext == null)
+            mContext= new WeakReference<>(context);
+    }
+
+
+
 
     public static RealTimeDataBaseUtil getInstance() {
         if (realTimeDataBaseUtil == null) {
@@ -147,11 +154,11 @@ public class RealTimeDataBaseUtil {
 
 
     public void downloadChattingUserVisibleListFromRoomChatTable() {
-        if (ConnectionUtil.isAppOnline(mContext)) {
+        if (ConnectionUtil.isAppOnline(mContext.get())) {
             mRefChatRoom.child("members").addChildEventListener(mMemberNodeChildEventListener);
         } else {
-            if (mInternetConnectionListener != null)
-                mInternetConnectionListener.onHaveNoInternetConnection();
+            if (mInternetConnectionChatRoomFragListener != null)
+                mInternetConnectionChatRoomFragListener.onHaveNoInternetConnection();
         }
     }
 
@@ -286,7 +293,7 @@ public class RealTimeDataBaseUtil {
 
     public void downloadContactListFromContactTable() {
 
-        if (ConnectionUtil.isAppOnline(mContext)) {
+        if (ConnectionUtil.isAppOnline(mContext.get())) {
             final String uid = FirebaseAuth.getInstance().getUid();
             if (uid != null) {
                 mRefContacts.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -309,8 +316,8 @@ public class RealTimeDataBaseUtil {
             }
 
         } else {
-            if (mInternetConnectionListener != null)
-                mInternetConnectionListener.onHaveNoInternetConnection();
+            if (mInternetConnectionContactFragListener != null)
+                mInternetConnectionContactFragListener.onHaveNoInternetConnection();
         }
 
     }
@@ -561,7 +568,7 @@ public class RealTimeDataBaseUtil {
 
     public void downloadChattyChanel() {
 
-        if (ConnectionUtil.isAppOnline(mContext)) {
+        if (ConnectionUtil.isAppOnline(mContext.get())) {
             String currUid = FirebaseAuth.getInstance().getUid();
             if (currUid != null) {
                 mRefUserChanel.child(currUid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -588,8 +595,8 @@ public class RealTimeDataBaseUtil {
             }
 
         } else {
-            if (mInternetConnectionListener != null)
-                mInternetConnectionListener.onHaveNoInternetConnection();
+            if (mInternetConnectionMessageFragListener != null)
+                mInternetConnectionMessageFragListener.onHaveNoInternetConnection();
         }
 
     }
@@ -956,8 +963,16 @@ public class RealTimeDataBaseUtil {
     }
 
 
-    public void setmInternetConnectionListener(InternetConnectionListener listener) {
-        mInternetConnectionListener = listener;
+    public void setmInternetConnectionMessageFragListener(InternetConnectionListener listener) {
+        mInternetConnectionMessageFragListener = listener;
+    }
+
+    public void setmInternetConnectionContactFragListener(InternetConnectionListener listener) {
+        mInternetConnectionContactFragListener = listener;
+    }
+
+    public void setmInternetConnectionChatRoomFragListener(InternetConnectionListener listener) {
+        mInternetConnectionChatRoomFragListener = listener;
     }
 
     public void setUserChanelNodeInDatabaseListener(UserChanelNodeOnStoreListener listener) {

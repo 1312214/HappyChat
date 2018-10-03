@@ -56,6 +56,7 @@
     <string name="icon_feedback">icon feedback</string>
     <string name="icon_terms">icon terms</string>
     <string name="image_message">image message</string>
+    <string name="retry">Retry</string>
 
 
 </resources>
