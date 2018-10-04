@@ -44,7 +44,7 @@ public class LatestMessageListFragment extends BaseFragment implements RealTimeD
         } else {
             throw new ClassCastException("Error: you must implement LatestMessageListFragListener.onReloadDataOfAllFragment");
         }
-        Log.e(TAG, "onAttach");
+//        Log.e(TAG, "onAttach");
     }
 
     @Override
@@ -54,7 +54,7 @@ public class LatestMessageListFragment extends BaseFragment implements RealTimeD
         RealTimeDataBaseUtil.getInstance().setChattyChanelListListener(this);
         RealTimeDataBaseUtil.getInstance().setmInternetConnectionMessageFragListener(this);
         setRetainInstance(true);
-        Log.e(TAG, "onCreate");
+//        Log.e(TAG, "onCreate");
     }
 
     @Nullable
@@ -67,21 +67,11 @@ public class LatestMessageListFragment extends BaseFragment implements RealTimeD
         rvChattyChanelList.setAdapter(mChattyChanelListAdapter);
         rvChattyChanelList.setLayoutManager(new LinearLayoutManager(mContext));
         RealTimeDataBaseUtil.getInstance().downloadChattyChanel();
-        Log.e(TAG, "onCreateView");
+//        Log.e(TAG, "onCreateView");
         return root;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.e(TAG, "onStart");
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.e(TAG, "onStop");
-    }
 
     @Override
     public void onDetach() {
@@ -126,7 +116,6 @@ public class LatestMessageListFragment extends BaseFragment implements RealTimeD
 
     @Override
     public void onHaveNoInternetConnection() {
-
         txtStatus.setText("No Internet Connection");
         txtStatus.setVisibility(View.VISIBLE);
         btnRetry.setVisibility(View.VISIBLE);

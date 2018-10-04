@@ -64,17 +64,15 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.e(TAG, "onRestoreInstanceState");
+//        Log.e(TAG, "onRestoreInstanceState");
     }
-
-
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean("config_changing", true);
         super.onSaveInstanceState(outState);
-        Log.e(TAG, "onSaveInstanceState");
+//        Log.e(TAG, "onSaveInstanceState");
     }
 
 
@@ -153,40 +151,12 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
     }
 
 
-    private void hideActionBarOptionsIfShowing() {
-        if (mActionBar.isShowing()) {
-            mActionBar.hide();
-            mActionBar.setTitle("");
-            mSelectedUser = null;
-        }
-    }
-
-
     @Override
     public void onPositiveButtonClicked() {
         ((MoreFragment)mViewPagerAdapter.getItem(3)).logout();
     }
 
-    private void initUI() {
-        mActionBar = getSupportActionBar();
-        if (mActionBar != null) getSupportActionBar().hide();
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        viewPager = findViewById(R.id.viewPager_home);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        viewPager.addOnPageChangeListener(this);
-    }
 
-
-    private void seeProfile(ChattingUser selectedUser) {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra("selected_user", selectedUser);
-        startActivity(intent);
-    }
-
-    private void addNewFriend(ChattingUser selectedUser) {
-        RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUser.getUid());
-        mActionBar.hide();
-    }
 
     @Override
     public void onReloadDataOfAllFragment() {
@@ -221,6 +191,33 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
     }
 
+    private void hideActionBarOptionsIfShowing() {
+        if (mActionBar.isShowing()) {
+            mActionBar.hide();
+            mActionBar.setTitle("");
+            mSelectedUser = null;
+        }
+    }
+
+    private void initUI() {
+        mActionBar = getSupportActionBar();
+        if (mActionBar != null) getSupportActionBar().hide();
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        viewPager = findViewById(R.id.viewPager_home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        viewPager.addOnPageChangeListener(this);
+    }
+
+    private void seeProfile(ChattingUser selectedUser) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("selected_user", selectedUser);
+        startActivity(intent);
+    }
+
+    private void addNewFriend(ChattingUser selectedUser) {
+        RealTimeDataBaseUtil.getInstance().addNewFriendToContact(selectedUser.getUid());
+        mActionBar.hide();
+    }
 
     private void setUpViewPagerAdapter() {
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
